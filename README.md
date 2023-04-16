@@ -68,3 +68,6 @@ Order depends on what I feel like working on when I have the free time 😃
 - Shout out to Flask tutorial for the frontend. I would have gone for a Bootstrap option but had this old tutorial project saved.
 
 ## Screenshots
+![](/screenshots/creating-a-task.png)
+![](/screenshots/adding-a-comment.png)
+![](/screenshots/done-tasks.png)
