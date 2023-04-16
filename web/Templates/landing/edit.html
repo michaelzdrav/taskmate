@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Edit Task{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="title">Title</label>
+    <input name="title" id="title" value="{{ task['title'] }}" required>
+
+    <label for="due_date">Due Date</label>
+      <input type="date" id="due_date" name="due_date" value="{{ task['due_date'] }}">
+
+    <label for="body">Description</label>
+    <textarea name="body" id="body">{{ task['body'] }}</textarea>
+
+    <input type="submit" value="Save">
+  </form>
+{% endblock %}
