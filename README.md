@@ -15,7 +15,7 @@ Don't expect it to be worked on too much, I really only commit an hour or two a 
 - Basic Authentication
 - Written in Flask
 - Basic To Do list
-- Easy ability to self host (soon to be dockerised)
+- Easy ability to self host (Docker repo: mz1234/taskmate)
 - SQLite database (more options coming)
 
 ## Installation
