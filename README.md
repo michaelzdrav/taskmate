@@ -41,9 +41,18 @@ Inspecting the database can be done using the Makefile also
   make db-view
 ```
 
+## Docker
+
+Run with Docker via repo https://hub.docker.com/r/mz1234/taskmate
+
+```bash
+  docker run -d -p 5001:5001 mz1234/taskmate
+```
+
 ## Roadmap 
 Order depends on what I feel like working on when I have the free time 😃
 
+- ~~CI/CD pipeline to build image and push to Dockerhub~~ 
 - Proper logging instead of just printing values everywhere
 - Add ability to turn off default user test/test.
 - Add settings page, configure timezones, store tasks in local timezones 
@@ -54,7 +63,6 @@ Order depends on what I feel like working on when I have the free time 😃
 - add a get_task_comment to every update/delete of comments
 - SMTP integration for notifications (task creation/overdue/comments left)
 - Introduction of testing using pytests, (#TODO check out https://flask.palletsprojects.com/en/2.2.x/tutorial/tests/)
-- CI/CD pipeline to build image and push to Dockerhub
 - Deploying this in AWS
   - Deploying in AWS for use
   - Opening up the API for use
