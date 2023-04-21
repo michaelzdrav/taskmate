@@ -2,10 +2,12 @@ install:
 	virtualenv venv; \
 	source venv/bin/activate \
 	pip install -r requirements.txt;
-	
-tests:
-	source venv/bin/activate; \
-	python manage.py test
+
+coverage:
+	python -m pytest tests/ --cov=.
+
+test: coverage
+	python -m pytest tests/ -v
 
 run:
 	source venv/bin/activate; \
