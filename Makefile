@@ -6,11 +6,8 @@ install:
 dependencies:
 	pip install -r requirements.txt
 
-coverage:
-	python -m pytest tests/ --cov=.
-
-test: coverage
-	python -m pytest tests/ -v
+test:
+	pytest -v --cov
 
 run:
 	source venv/bin/activate; \
