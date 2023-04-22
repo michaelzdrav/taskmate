@@ -4,7 +4,7 @@ install:
 	pip install -r requirements.txt;
 
 dependencies:
-	pip install -r requirements.txt
+	python -m pip install -r requirements.txt
 
 test:
 	pytest -v --cov
