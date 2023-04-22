@@ -5,6 +5,7 @@ install:
 
 dependencies:
 	python -m pip install -r requirements.txt
+	pip install -e .
 
 test:
 	python -m pytest tests/ --cov=.
