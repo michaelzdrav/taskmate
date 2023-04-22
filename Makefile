@@ -2,10 +2,13 @@ install:
 	virtualenv venv; \
 	source venv/bin/activate \
 	pip install -r requirements.txt;
-	
-tests:
-	source venv/bin/activate; \
-	python manage.py test
+
+dependencies:
+	pip install -r requirements.txt
+	pip install -e .
+
+test:
+	python -m pytest tests/ --cov=.
 
 run:
 	source venv/bin/activate; \
