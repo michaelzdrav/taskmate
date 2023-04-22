@@ -5,9 +5,10 @@ install:
 
 dependencies:
 	pip install -r requirements.txt
+	pip install -e .
 
 test:
-	pytest -v --cov
+	python -m pytest tests/ --cov=.
 
 run:
 	source venv/bin/activate; \
