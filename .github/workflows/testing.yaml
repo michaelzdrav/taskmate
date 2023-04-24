@@ -6,6 +6,23 @@ on:
       - "testing"
 
 jobs:
+  scan-code:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: make dependencies
+      - name: Scan Code
+        run: make sast
+
   test:
     runs-on: ubuntu-latest
     strategy:

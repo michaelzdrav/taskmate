@@ -7,6 +7,10 @@ dependencies:
 	python -m pip install -r requirements.txt
 	pip install -e .
 
+sast:
+	pip install bandit
+	bandit -r web
+
 test:
 	python -m pytest tests/ --cov=.
 
