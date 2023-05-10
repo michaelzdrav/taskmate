@@ -1,11 +1,18 @@
+BUILD_TIME := $(shell date +%FT%T%z)
+PROJECT    := $(shell basename $(PWD))
+
 install:
 	virtualenv venv; \
 	source venv/bin/activate \
 	pip install -r requirements.txt;
 
 dependencies:
-	pip install -r requirements.txt
+	python -m pip install -r requirements.txt
 	pip install -e .
+
+sast:
+	pip install bandit
+	bandit -r web
 
 test:
 	python -m pytest tests/ --cov=.
