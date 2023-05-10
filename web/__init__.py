@@ -9,7 +9,6 @@ def create_app(test_config=None):
         print("SUCCESS: Loaded SECRET_KEY.")
     else:
         print('ERROR: The SECRET_KEY environment variable is not set!')
-        exit(1)
 
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True, template_folder='./Templates')
