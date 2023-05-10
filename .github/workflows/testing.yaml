@@ -3,7 +3,7 @@ name: Docker Image CI
 on:
   push:
     branches:
-      - "dev"
+      - "testing"
 
 jobs:
   scan-code:
@@ -26,8 +26,6 @@ jobs:
         run: make sast
 
   test:
-    env:
-      SECRET_KEY: 'mytestsecretkey'
     runs-on: ubuntu-latest
     strategy:
       matrix:

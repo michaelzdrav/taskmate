@@ -1,13 +1,19 @@
 import os
 
 from flask import Flask
-
+from dotenv import load_dotenv
 
 def create_app(test_config=None):
+    load_dotenv() 
+    if os.getenv("SECRET_KEY"):
+        print("SUCCESS: Loaded SECRET_KEY.")
+    else:
+        print('ERROR: The SECRET_KEY environment variable is not set!')
+
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True, template_folder='./Templates')
     app.config.from_mapping(
-        SECRET_KEY='dev',
+        SECRET_KEY=os.getenv("SECRET_KEY"),
         DATABASE=os.path.join(app.instance_path, 'web.sqlite'),
     )
 
