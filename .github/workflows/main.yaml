@@ -46,7 +46,11 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+<<<<<<< HEAD
     needs: [scan-code, test]
+=======
+    needs: test
+>>>>>>> main
     steps:
       - name: Checkout
         uses: actions/checkout@v3
