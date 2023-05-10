@@ -1,3 +1,6 @@
+BUILD_TIME := $(shell date +%FT%T%z)
+PROJECT    := $(shell basename $(PWD))
+
 install:
 	virtualenv venv; \
 	source venv/bin/activate \
