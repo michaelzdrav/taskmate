@@ -22,6 +22,8 @@ jobs:
         run: make dependencies
       - name: Run tests
         run: make test
+      - name: Scan Code
+        run: make sast
 
   build:
     runs-on: ubuntu-latest
