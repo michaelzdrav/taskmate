@@ -1,0 +1,1 @@
+docker run -d -p 25:1025 -p 1080:1080 --name mailcatcher opifex/mailcatcher

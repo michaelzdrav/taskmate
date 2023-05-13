@@ -52,15 +52,20 @@ Run Pytest against the code, including test coverage
   make test
 ```
 
+SMTP testing (catch-all web UI at localhost:1080)
+
+```bash
+  sh docker-compose/run.sh
+```
+
 ## Roadmap 
 Order depends on what I feel like working on when I have the free time 😃
 
 - ~~CI/CD pipeline to build image and push to Dockerhub~~ 
 - ~~Add pytest coverage (#TODO check out https://github.com/pytest-dev/pytest-cov)~~
-- ~~Introduction of testing using pytests, (#TODO check out https://flask.palletsprojects.com/en/2.2.x/tutorial/tests/) ~~
+- ~~Introduction of testing using pytests, (#TODO check out https://flask.palletsprojects.com/en/2.2.x/tutorial/tests/)~~
 - Add advanced pytests ⌛
 - SMTP integration for notifications (task creation/overdue/comments left) ⌛
-  - New db tables
 - Proper logging instead of just printing values everywhere
 - Add ability to turn off default user test/test.
 - Add settings page, configure timezones, store tasks in local timezones 
@@ -69,6 +74,17 @@ Order depends on what I feel like working on when I have the free time 😃
 - Add get_task before anything that uses the existing task to check it exists
 - Refactor create/update to use functions to check due_date 
 - add a get_task_comment to every update/delete of comments
+- File uploads for each task
+- Add caching for performance
+- Switch to flask-sqlalchemy to support more db engines https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-iv-database 
+- Introduce background tasks with celery (for emails etc) to reduce waiting times 
+  - https://flask.palletsprojects.com/en/2.3.x/patterns/celery/
+- Improve security
+  - Flask-talisman
+  - Flask-paranoid
+  - Password Reset
+  - Password complexity
+  - Account verification
 - Deploying this in AWS
   - Deploying in AWS for use
   - Opening up the API for use

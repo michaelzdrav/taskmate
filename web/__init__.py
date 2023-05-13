@@ -2,6 +2,9 @@ import os
 
 from flask import Flask
 from dotenv import load_dotenv
+from flask_mail import Mail
+
+mail = Mail()
 
 def create_app(test_config=None):
     load_dotenv() 
@@ -15,8 +18,12 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY=os.getenv("SECRET_KEY"),
         DATABASE=os.path.join(app.instance_path, 'web.sqlite'),
+        MAIL_SERVER = os.environ.get('MAIL_SERVER'),
+        MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25),
+        ADMINS = ['your-email@example.com']
     )
-
+    database = os.path.join(app.instance_path, 'web.sqlite')
+    print("DATABASE: ", database)
     if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
@@ -32,6 +39,7 @@ def create_app(test_config=None):
 
     from . import db
     db.init_app(app)
+    mail.init_app(app)
 
     from . import auth
     app.register_blueprint(auth.bp)
@@ -44,6 +52,5 @@ def create_app(test_config=None):
     from . import landing
     app.register_blueprint(landing.bp)
     app.add_url_rule('/', endpoint='index')
-
 
     return app
