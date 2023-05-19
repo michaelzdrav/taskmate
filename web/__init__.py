@@ -14,7 +14,7 @@ def create_app(test_config=None):
         print('ERROR: The SECRET_KEY environment variable is not set!')
 
     # create and configure the app
-    app = Flask(__name__, instance_relative_config=True, template_folder='./Templates')
+    app = Flask(__name__, instance_path='/Users/mz/code/learning/task-mate/instance', instance_relative_config=True, template_folder='./Templates')
     app.config.from_mapping(
         SECRET_KEY=os.getenv("SECRET_KEY"),
         DATABASE=os.path.join(app.instance_path, 'web.sqlite'),
