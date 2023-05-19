@@ -66,13 +66,13 @@ Order depends on what I feel like working on when I have the free time 😃
 - ~~Introduction of testing using pytests, (#TODO check out https://flask.palletsprojects.com/en/2.2.x/tutorial/tests/)~~
 - Add advanced pytests ⌛
 - SMTP integration for notifications (task creation/overdue/comments left) ⌛
-- Proper logging instead of just printing values everywhere
+- Proper logging instead of just printing values everywhere ⌛
+- Refactoring ⌛
+  - Refactor create/update to use functions to check due_date 
 - Add ability to turn off default user test/test.
 - Add settings page, configure timezones, store tasks in local timezones 
-- Add delete for comments
-- Add edit for comments
+- Add edit & delete for comments
 - Add get_task before anything that uses the existing task to check it exists
-- Refactor create/update to use functions to check due_date 
 - add a get_task_comment to every update/delete of comments
 - File uploads for each task
 - Add caching for performance
