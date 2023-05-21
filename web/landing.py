@@ -37,8 +37,7 @@ def index():
                 "landing/index.html", tasks=tasks, overdue=overdue, comments=comments
             )
     except TypeError as e:
-        current_app.logger.exception("An error occurred: %s", e)
-        current_app.logger.info("User is not logged in.")
+        current_app.logger.debug("User is not logged in.")
         return render_template("landing/index.html")
 
 
@@ -172,7 +171,6 @@ def done():
 @bp.route("/<int:id>/comment", methods=("POST",))
 @login_required
 def add_comment(id):
-    app = current_app._get_current_object()
     comment = request.form["comment"]
     current_app.logger.info("Task [id] %s, adding [comment] %s", id, comment)
     task = get_task(id)
@@ -228,7 +226,6 @@ def delete_comment(id):
 @bp.route("/<int:id>/done", methods=("POST",))
 @login_required
 def move_done(id):
-    app = current_app._get_current_object()
     current_app.logger.info("Setting task [id] %s status to DONE", id)
     get_task(id)
     db = get_db()
@@ -241,7 +238,6 @@ def move_done(id):
 @bp.route("/<int:id>/update", methods=("POST", "GET"))
 @login_required
 def update_task(id):
-    app = current_app._get_current_object()
     if request.method == "POST":
         title = request.form["title"]
         due_date = request.form["due_date"]
@@ -270,6 +266,7 @@ def update_task(id):
             flash(error)
         else:
             db = get_db()
+            current_app.logger.info("Updating task [id] %s, setting [title] %s, [due_date] %s, [body] %s, [status] %s.", id, title, due_date, body, status)
 
             db.execute(
                 "UPDATE task SET title = ?, due_date = ?, body = ?, status = ?"
@@ -288,7 +285,6 @@ def update_task(id):
 # @bp.route("/<int:id>/overdue", methods=("POST",))
 # @login_required
 # def move_overdue(id):
-#     app = current_app._get_current_object()
 #     set_task_overdue(id)
 #     return redirect(url_for("landing.index"))
 
@@ -296,14 +292,15 @@ def update_task(id):
 @bp.route("/<int:id>/delete", methods=("POST",))
 @login_required
 def delete(id):
-    app = current_app._get_current_object()
     task = get_task(id)
     if task["status"] == "ACTIVE" or task["status"] == "OVERDUE":
+        current_app.logger.info("Deleting task [id] %s.", id)
         db = get_db()
         db.execute("DELETE FROM task WHERE id = ?", (id,))
         db.commit()
         return redirect(url_for("landing.index"))
     else:
+        current_app.logger.info("Deleting task [id] %s.", id)
         db = get_db()
         db.execute("DELETE FROM task WHERE id = ?", (id,))
         db.commit()

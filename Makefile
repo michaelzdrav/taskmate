@@ -17,10 +17,14 @@ sast:
 test:
 	python -m pytest tests/ --cov=.
 
-run:
+debug:
 	source venv/bin/activate; \
 	flask --app web run --debug --host 0.0.0.0  --port 5001
 
+run:
+	source venv/bin/activate; \
+	gunicorn 'web:create_app()'
+	
 db: 
 	rm instance/web.sqlite; \
 	flask --app web init-db;
