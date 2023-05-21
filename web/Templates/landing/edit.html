@@ -13,8 +13,11 @@
       <input type="date" id="due_date" name="due_date" value="{{ task['due_date'] }}">
 
     <label for="body">Description</label>
+    {% if task['body'] is not none %}   
     <textarea name="body" id="body">{{ task['body'] }}</textarea>
-
+    {% else %}
+    <textarea name="body" id="body"></textarea>
+    {% endif %}
     <input type="submit" value="Save">
   </form>
 {% endblock %}
