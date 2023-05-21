@@ -1,7 +1,7 @@
 import functools
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, g, redirect, render_template, request, session, url_for, current_app
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -31,8 +31,10 @@ def register():
                 )
                 db.commit()
             except db.IntegrityError:
+                current_app.logger.info("User %s is already registered.", username)
                 error = f"User {username} is already registered."
             else:
+                current_app.logger.info("User %s has been registered.", username)
                 return redirect(url_for("auth.login"))
 
         flash(error)
@@ -51,13 +53,17 @@ def login():
         ).fetchone()
 
         if user is None:
+            current_app.logger.info("Failed login - Incorrect username: %s", username)
             error = 'Incorrect username.'
+            
         elif not check_password_hash(user['password'], password):
+            current_app.logger.info("Failed login - Incorrect password for username: %s", username)
             error = 'Incorrect password.'
 
         if error is None:
             session.clear()
             session['user_id'] = user['id']
+            current_app.logger.info("User %s has logged in.", username)
             return redirect(url_for('index'))
 
         flash(error)
@@ -77,6 +83,7 @@ def load_logged_in_user():
 
 @bp.route('/logout')
 def logout():
+    current_app.logger.info("User_id %s has logged out.", session.get('user_id'))
     session.clear()
     return redirect(url_for('index'))
 

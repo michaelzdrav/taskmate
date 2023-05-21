@@ -13,21 +13,10 @@ Please make sure to remove the <b>test</b> user in <b>web/db.py</b> if you are g
 - Easy ability to self host (Docker repo: mz1234/taskmate)
 - SQLite database (more options coming)
 
-## Installation
-
-Install Task Mate with the Makefile
-
+## Setup
+Initialise the database.
 ```bash
-  make install
   make db
-```
-
-## Running
-
-Use the Makefile to initialise a database
-
-```bash
-  make run
 ```
 
 Inspecting the database can be done using the Makefile also
@@ -38,10 +27,10 @@ Inspecting the database can be done using the Makefile also
 
 ## Docker
 
-Run with Docker via repo https://hub.docker.com/r/mz1234/taskmate
+Run with docker-compose
 
 ```bash
-  docker run -d -p 5001:5001 mz1234/taskmate
+  make docker
 ```
 
 ## Testing
@@ -49,13 +38,7 @@ Run with Docker via repo https://hub.docker.com/r/mz1234/taskmate
 Run Pytest against the code, including test coverage
 
 ```bash
-  make test
-```
-
-SMTP testing (catch-all web UI at localhost:1080)
-
-```bash
-  sh docker-compose/run.sh
+  make test sast
 ```
 
 ## Roadmap 
@@ -64,15 +47,15 @@ Order depends on what I feel like working on when I have the free time 😃
 - ~~CI/CD pipeline to build image and push to Dockerhub~~ 
 - ~~Add pytest coverage (#TODO check out https://github.com/pytest-dev/pytest-cov)~~
 - ~~Introduction of testing using pytests, (#TODO check out https://flask.palletsprojects.com/en/2.2.x/tutorial/tests/)~~
+- ~~SMTP integration for notifications (task creation/overdue/comments left)~~
+~~- Proper logging instead of just printing values everywhere~~
 - Add advanced pytests ⌛
-- SMTP integration for notifications (task creation/overdue/comments left) ⌛
-- Proper logging instead of just printing values everywhere
+- Refactoring ⌛
+  - Refactor create/update to use functions to check due_date 
 - Add ability to turn off default user test/test.
 - Add settings page, configure timezones, store tasks in local timezones 
-- Add delete for comments
-- Add edit for comments
+- Add edit & delete for comments
 - Add get_task before anything that uses the existing task to check it exists
-- Refactor create/update to use functions to check due_date 
 - add a get_task_comment to every update/delete of comments
 - File uploads for each task
 - Add caching for performance
@@ -101,3 +84,4 @@ Order depends on what I feel like working on when I have the free time 😃
 ![](/screenshots/creating-a-task.png)
 ![](/screenshots/adding-a-comment.png)
 ![](/screenshots/done-tasks.png)
+![](/screenshots/new-task-email.png)

@@ -3,27 +3,47 @@ import os
 from flask import Flask
 from dotenv import load_dotenv
 from flask_mail import Mail
+from logging.config import dictConfig
 
 mail = Mail()
 
 def create_app(test_config=None):
     load_dotenv() 
-    if os.getenv("SECRET_KEY"):
-        print("SUCCESS: Loaded SECRET_KEY.")
-    else:
-        print('ERROR: The SECRET_KEY environment variable is not set!')
 
     # create and configure the app
-    app = Flask(__name__, instance_relative_config=True, template_folder='./Templates')
+    app = Flask(__name__, instance_path=os.path.join(os.getcwd(), 'instance'), instance_relative_config=True, template_folder='./Templates')
+    
+    dictConfig({
+        'version': 1,
+        'formatters': {'default': {
+            'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+        }},
+        'handlers': {'wsgi': {
+            'class': 'logging.StreamHandler',
+            'stream': 'ext://flask.logging.wsgi_errors_stream',
+            'formatter': 'default'
+        }},
+        'root': {
+            'level': 'INFO',
+            'handlers': ['wsgi']
+        }
+    })
+
+    if os.getenv("SECRET_KEY"):
+        app.logger.info('Loaded SECRET_KEY.')
+    else:
+        app.logger.error('The SECRET_KEY environment variable needs to be set.')
+ 
     app.config.from_mapping(
         SECRET_KEY=os.getenv("SECRET_KEY"),
         DATABASE=os.path.join(app.instance_path, 'web.sqlite'),
         MAIL_SERVER = os.environ.get('MAIL_SERVER'),
         MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25),
-        ADMINS = ['your-email@example.com']
+        ADMINS = ['your-email@example.com'],
     )
-    database = os.path.join(app.instance_path, 'web.sqlite')
-    print("DATABASE: ", database)
+
+    app.logger.info('Using database at %s', os.path.join(app.instance_path, 'web.sqlite'))
+
     if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
@@ -40,7 +60,6 @@ def create_app(test_config=None):
     from . import db
     db.init_app(app)
     mail = Mail(app)
-    # mail.init_app(app)
 
     from . import auth
     app.register_blueprint(auth.bp)
