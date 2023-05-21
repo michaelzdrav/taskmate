@@ -84,3 +84,4 @@ Order depends on what I feel like working on when I have the free time 😃
 ![](/screenshots/creating-a-task.png)
 ![](/screenshots/adding-a-comment.png)
 ![](/screenshots/done-tasks.png)
+![](/screenshots/new-task-email.png)
