@@ -11,9 +11,8 @@ def create_app(test_config=None):
     load_dotenv() 
 
     # create and configure the app
-    app = Flask(__name__, instance_path='/Users/mz/code/learning/task-mate/instance', instance_relative_config=True, template_folder='./Templates')
-
-    # logging.config.dictConfig(dictConfig)
+    app = Flask(__name__, instance_path=os.path.join(os.getcwd(), 'instance'), instance_relative_config=True, template_folder='./Templates')
+    
     dictConfig({
         'version': 1,
         'formatters': {'default': {
@@ -40,10 +39,10 @@ def create_app(test_config=None):
         DATABASE=os.path.join(app.instance_path, 'web.sqlite'),
         MAIL_SERVER = os.environ.get('MAIL_SERVER'),
         MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25),
-        ADMINS = ['your-email@example.com']
+        ADMINS = ['your-email@example.com'],
     )
 
-    app.logger.debug('Using database at %s', os.path.join(app.instance_path, 'web.sqlite'))
+    app.logger.info('Using database at %s', os.path.join(app.instance_path, 'web.sqlite'))
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -61,7 +60,6 @@ def create_app(test_config=None):
     from . import db
     db.init_app(app)
     mail = Mail(app)
-    # mail.init_app(app)
 
     from . import auth
     app.register_blueprint(auth.bp)
