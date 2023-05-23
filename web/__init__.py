@@ -37,9 +37,9 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY=os.getenv("SECRET_KEY"),
         DATABASE=os.path.join(app.instance_path, 'web.sqlite'),
-        MAIL_SERVER = os.environ.get('MAIL_SERVER'),
-        MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25),
-        ADMINS = ['your-email@example.com'],
+        # MAIL_SERVER = os.environ.get('MAIL_SERVER'),
+        # MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25),
+        # ADMINS = ['your-email@example.com'],
     )
 
     app.logger.info('Using database at %s', os.path.join(app.instance_path, 'web.sqlite'))

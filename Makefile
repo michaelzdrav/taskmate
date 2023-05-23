@@ -4,8 +4,12 @@ PROJECT    := $(shell basename $(PWD))
 build: freeze
 	docker build -t taskmate:latest .
 
+docker-dev:
+	docker-compose -f ./docker-compose/docker-compose-dev.yaml down
+	docker-compose -f ./docker-compose/docker-compose-dev.yaml up -d
+
 docker: 
-	docker-compose up -d
+	docker-compose -f ./docker-compose.yaml up -d 
 
 install:
 	virtualenv venv; \

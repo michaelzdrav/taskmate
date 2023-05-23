@@ -24,6 +24,7 @@ from .queries import (
     set_task_overdue,
 )
 
+
 @bp.route("/")
 def index():
     try:
@@ -79,7 +80,7 @@ def create():
                 )
                 db.commit()
 
-                send_new_task_email(title)
+                #send_new_task_email(title)
                 return redirect(url_for("landing.index"))
 
             if due_date == "" and body != "":
@@ -95,7 +96,7 @@ def create():
                 )
                 db.commit()
 
-                send_new_task_email(title, body)
+                #send_new_task_email(title, body)
                 return redirect(url_for("landing.index"))
 
             if due_date != "" and body == "":
@@ -113,7 +114,7 @@ def create():
                 )
                 db.commit()
 
-                send_new_task_email(title, due_date)
+                #send_new_task_email(title, due_date)
                 return redirect(url_for("landing.index"))
 
             current_app.logger.info(
@@ -131,7 +132,7 @@ def create():
             )
             db.commit()
 
-            send_new_task_email(title, due_date, body)
+            #send_new_task_email(title, due_date, body)
             return redirect(url_for("landing.index"))
     return render_template("landing/create.html")
 
@@ -266,7 +267,14 @@ def update_task(id):
             flash(error)
         else:
             db = get_db()
-            current_app.logger.info("Updating task [id] %s, setting [title] %s, [due_date] %s, [body] %s, [status] %s.", id, title, due_date, body, status)
+            current_app.logger.info(
+                "Updating task [id] %s, setting [title] %s, [due_date] %s, [body] %s, [status] %s.",
+                id,
+                title,
+                due_date,
+                body,
+                status,
+            )
 
             db.execute(
                 "UPDATE task SET title = ?, due_date = ?, body = ?, status = ?"

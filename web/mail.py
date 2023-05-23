@@ -25,5 +25,5 @@ def send_new_task_email(title, due_date=None, description=None):
     msg.body = render_template('email/new_task.txt',user=g.user,body=body)
     msg.html = render_template('email/new_task.html',user=g.user,body=body)
 
-    app.logger.info('Sending email "%s" to %s on port %s', body['title'])
+    app.logger.info('Sending email %s to %s', body['title'])
     mail.send(msg)

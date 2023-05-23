@@ -45,6 +45,7 @@
       {{ task['body'] }}
     </p>
   </details>
+  {% endif %}
 
   <details>
     <summary>
@@ -68,7 +69,6 @@
     </div>
 
     {% for comment in comments %}
-
     {% if comment['task_id'] == task['id']  %}
     <hr class="comment">
     <p>
@@ -77,6 +77,7 @@
     <p>
       Comment: {{ comment['content'] }}
     </p>
+    <!-- #TODO Make this delete the comment rather than delete the task -->
     <div class="post">
       <form action="{{ url_for('landing.delete', id=task['id']) }}" method="post">
         <input class="danger" type="submit" value="Delete" onclick="return confirm('Delete task?');">
@@ -88,7 +89,6 @@
     {% endif %}
     {% endfor %}
   </details>
-  {% endif %}
 </article>
 
 {% if not loop.last %}

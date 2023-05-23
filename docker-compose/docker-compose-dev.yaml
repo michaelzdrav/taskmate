@@ -11,7 +11,7 @@ services:
     ports:
       - '5001:5001'
     volumes:
-      - ./instance:/run/instance
+      - ../instance:/run/instance
     environment:
       - SECRET_KEY=test
       - MAIL_SERVER=mailcatcher
