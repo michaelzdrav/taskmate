@@ -12,7 +12,7 @@ def create_app(test_config=None):
 
     # create and configure the app
     app = Flask(__name__, instance_path=os.path.join(os.getcwd(), 'instance'), instance_relative_config=True, template_folder='./Templates')
-    
+
     dictConfig({
         'version': 1,
         'formatters': {'default': {
@@ -37,10 +37,18 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY=os.getenv("SECRET_KEY"),
         DATABASE=os.path.join(app.instance_path, 'web.sqlite'),
-        MAIL_SERVER = os.environ.get('MAIL_SERVER'),
-        MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25),
-        ADMINS = ['your-email@example.com'],
+        # MAIL_SERVER = os.environ.get('MAIL_SERVER'),
+        # MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25),
+        # ADMINS = ['your-email@example.com'],
     )
+
+    if os.environ.get('SMTP_ENABLED') == "True":
+        app.logger.info('SMTP is enabled.')
+        MAIL_SERVER = os.environ.get('MAIL_SERVER')
+        MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25)
+        mail = Mail(app)
+    else:
+        app.logger.info('SMTP is not enabled.')
 
     app.logger.info('Using database at %s', os.path.join(app.instance_path, 'web.sqlite'))
 
@@ -59,7 +67,7 @@ def create_app(test_config=None):
 
     from . import db
     db.init_app(app)
-    mail = Mail(app)
+    # mail = Mail(app)
 
     from . import auth
     app.register_blueprint(auth.bp)

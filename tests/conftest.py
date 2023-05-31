@@ -20,6 +20,9 @@ def app():
     app = create_app({
         'TESTING': True,
         'DATABASE': db_path,
+        'MAIL_SERVER': 'localhost',
+        'MAIL_PORT': 25,
+        'ADMINS': ['your-email@example.com'],
         'SECRET_KEY': 'mytestsecretkey'
     })
 

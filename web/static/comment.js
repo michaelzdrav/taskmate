@@ -1,6 +1,8 @@
-function onButtonClick(id) {
-  var comment = document.querySelectorAll("[id='comment']");
-  var save = document.querySelectorAll("[id='save']");
-  comment[id].className = "show";
-  save[id].className = "show";
+function toggleCommentSection(id) {
+  var commentSection = document.getElementById("commentSection" + id);
+  var addCommentButton = document.querySelector("#commentSection" + id + " .add");
+  
+  // Toggle visibility by adding or removing the 'd-none' class
+  commentSection.classList.toggle("d-none");
+  addCommentButton.classList.add("d-none");
 }
