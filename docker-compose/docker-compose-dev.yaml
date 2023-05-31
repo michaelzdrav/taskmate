@@ -7,9 +7,9 @@ services:
       - '1025:1025'
 
   taskmate:
-    image: mz1234/taskmate
+    image: mz1234/taskmate:11
     ports:
-      - '5001:5001'
+      - '80:5001'
     volumes:
       - ../instance:/run/instance
     environment:
