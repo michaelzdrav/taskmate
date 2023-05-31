@@ -7,7 +7,7 @@ services:
       - '1025:1025'
 
   taskmate:
-    image: taskmate:latest
+    image: mz1234/taskmate
     ports:
       - '5001:5001'
     volumes:

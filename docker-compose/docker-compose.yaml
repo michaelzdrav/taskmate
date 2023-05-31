@@ -1,7 +1,7 @@
 version: '3'
 services:
   taskmate:
-    image: taskmate:latest
+    image: mz1234/taskmate
     ports:
       - '5001:5001'
     volumes:
