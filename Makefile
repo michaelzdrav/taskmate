@@ -1,17 +1,31 @@
 BUILD_TIME := $(shell date +%FT%T%z)
 PROJECT    := $(shell basename $(PWD))
 
+env: 
+	@if [ ! -f .env ]; then \
+        secret_key=$$(echo $$RANDOM | base64); \
+        echo "SECRET_KEY=$$secret_key" >> .env; \
+		echo "MAIL_SERVER=smtp.googlemail.com" >> .env; \
+		echo "MAIL_PORT=587" >> .env; \
+		echo "MAIL_USE_TLS=1" >> .env; \
+		echo "MAIL_USERNAME=admin" >> .env; \
+		echo "MAIL_PASSWORD=password" >> .env; \
+		echo "SMTP_ENABLED=False" >> .env; \
+		echo "Created .env"; \
+	fi
+
 build: freeze
 	docker build -t taskmate:latest .
 
-docker-dev:
+docker-dev: 
 	docker-compose -f ./docker-compose/docker-compose-dev.yaml down
 	docker-compose -f ./docker-compose/docker-compose-dev.yaml up -d
 
-docker: 
-	docker-compose -f ./docker-compose.yaml up -d 
+docker:
+	docker-compose -f ./docker-compose/docker-compose.yaml down
+	docker-compose -f ./docker-compose/docker-compose.yaml up -d
 
-install:
+install: env
 	virtualenv venv; \
 	source venv/bin/activate; \
 	pip install -r requirements.txt;

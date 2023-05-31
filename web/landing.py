@@ -22,11 +22,18 @@ from .queries import (
     get_comments,
     get_task,
     set_task_overdue,
+    get_done_tasks,
+    delete_single_comment,
+    get_latest_task,
+    get_comments_for_task,
+    get_latest_done_task,
+    get_done_task,
+    get_status,
 )
 
 
-@bp.route("/")
-def index():
+@bp.route("/", methods=("GET",))
+def index(id=None):
     try:
         if g.user["id"]:
             db = get_db()
@@ -34,12 +41,39 @@ def index():
             overdue = get_overdue_tasks(g.user["id"])
             comments = get_comments(g.user["id"])
 
-            return render_template(
-                "landing/index.html", tasks=tasks, overdue=overdue, comments=comments
-            )
+            latest_task = get_latest_task(g.user["id"])
+
+            if id is not None:
+                view_task = get_task(id)
+
+                return render_template(
+                    "landing/index.html",
+                    tasks=tasks,
+                    overdue=overdue,
+                    comments=comments,
+                    view=view_task,
+                )
+            else:
+                return render_template(
+                    "landing/index.html",
+                    tasks=tasks,
+                    overdue=overdue,
+                    comments=comments,
+                    view=latest_task,
+                )
     except TypeError as e:
         current_app.logger.debug("User is not logged in.")
         return render_template("landing/index.html")
+
+
+@bp.route("/<int:id>/view", methods=("POST",))
+def load_view(id):
+    return index(id)
+
+
+@bp.route("/<int:id>/doneview", methods=("POST",))
+def load_doneview(id):
+    return done(id)
 
 
 @bp.route("/create", methods=("GET", "POST"))
@@ -80,7 +114,7 @@ def create():
                 )
                 db.commit()
 
-                #send_new_task_email(title)
+                # send_new_task_email(title)
                 return redirect(url_for("landing.index"))
 
             if due_date == "" and body != "":
@@ -96,7 +130,7 @@ def create():
                 )
                 db.commit()
 
-                #send_new_task_email(title, body)
+                # send_new_task_email(title, body)
                 return redirect(url_for("landing.index"))
 
             if due_date != "" and body == "":
@@ -114,7 +148,7 @@ def create():
                 )
                 db.commit()
 
-                #send_new_task_email(title, due_date)
+                # send_new_task_email(title, due_date)
                 return redirect(url_for("landing.index"))
 
             current_app.logger.info(
@@ -132,14 +166,13 @@ def create():
             )
             db.commit()
 
-            #send_new_task_email(title, due_date, body)
+            # send_new_task_email(title, due_date, body)
             return redirect(url_for("landing.index"))
     return render_template("landing/create.html")
 
 
 @bp.route("/done", methods=("GET",))
-@login_required
-def done():
+def done(id=None):
     try:
         if g.user["id"]:
             db = get_db()
@@ -160,8 +193,18 @@ def done():
                 (g.user["id"],),
             ).fetchall()
 
+            if id is not None:
+                latest_task = get_done_task(id)
+                return render_template(
+                    "landing/done_tasks.html",
+                    tasks=tasks,
+                    comments=comments,
+                    view=latest_task,
+                )
+
+            latest = get_latest_done_task(g.user["id"])
             return render_template(
-                "landing/done_tasks.html", tasks=tasks, comments=comments
+                "landing/done_tasks.html", tasks=tasks, comments=comments, view=latest
             )
     except TypeError as e:
         current_app.logger.exception("An error occurred: %s", e)
@@ -187,41 +230,19 @@ def add_comment(id):
 
     db.commit()
     if task["status"] != "DONE":
-        return redirect(url_for("landing.index"))
+        return load_view(id)
+        # return redirect(url_for("landing.index"))
     else:
-        return redirect(url_for("landing.done"))
+        return load_doneview(id)
 
 
-@bp.route("/<int:id>/deletecomment", methods=("POST",))
+@bp.route("/<int:id>/deletecomment/<int:task>", methods=("POST",))
 @login_required
-def delete_comment(id):
-    current_app.logger.info("[Soft Error] delete_comment() not yet implemented.")
-    return redirect(url_for("landing.index"))
-
-    # current_app.logger.info("Deleting comment [id]", id)
-    # # TODO add a get_task_comment
-    # # task = get_task(id)
-    # db = get_db()
-    # error = None
-    # task = db.execute(
-    #     "SELECT t.id FROM task t JOIN task_comment tc ON t.id = tc.task_id"
-    #     "  WHERE tc.task_id = ?",
-    #     (id,),
-    # ).fetchone
-
-    # if not task:
-    #     error = "Cannot find task."
-
-    # if error is not None:
-    #     flash(error)
-    # else:
-    #     db.execute("DELETE FROM task_comment WHERE task_id = ?", (id,))
-    #     db.commit()
-
-    # if task["status"] != "DONE":
-    #     return redirect(url_for("landing.index"))
-    # else:
-    #     return redirect(url_for("landing.done"))
+def delete_comment(id, task):
+    current_app.logger.info("Deleting comment [id] %s", id)
+    db = get_db()
+    delete_single_comment(id)
+    return load_view(task)
 
 
 @bp.route("/<int:id>/done", methods=("POST",))
@@ -283,7 +304,7 @@ def update_task(id):
             )
             db.commit()
 
-        return redirect(url_for("landing.index"))
+            return load_view(id)
 
     task = get_task(id)
     return render_template("landing/edit.html", task=task)

@@ -1,11 +1,5 @@
 version: '3'
 services:
-  mailcatcher:
-    image: opifex/mailcatcher
-    ports:
-      - '1080:1080'  
-      - '1025:1025'
-
   taskmate:
     image: taskmate:latest
     ports:
@@ -13,10 +7,11 @@ services:
     volumes:
       - ../instance:/run/instance
     environment:
-      - SECRET_KEY=test
+      - SECRET_KEY=<key>
       - MAIL_SERVER=mailcatcher
       - MAIL_PORT=1025
       - MAIL_USE_TLS=1
+      - MAIL_USERNAME=<username>
+      - MAIL_PASSWORD=<password>
       - SMTP_ENABLED=True
-    depends_on:
-      - mailcatcher
+
