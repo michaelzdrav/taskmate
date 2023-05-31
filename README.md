@@ -1,37 +1,71 @@
-# Task Mate
+# TaskMate
 Heres a basic to do list to keep you accountable of your tasks. Simply register your own user, create a task with a title, due date and description. Each task can have comments made.
 
 When your task is overdue, you will see an "Overdue" message displayed, along with an increment of the overdue task counter in the UI. Once completed, move the task to Done. Otherwise, Delete the task to be lost forever.
 
 Please make sure to remove the <b>test</b> user in <b>web/db.py</b> if you are going to expose this to the Internet.
 
+### Live Demo
+http://taskmate.duckdns.org/
+
+
 ## Features
 
 - Basic Authentication
 - Written in Flask
-- Basic To Do list
-- Easy ability to self host (Docker repo: mz1234/taskmate)
-- SQLite database (more options coming)
+- Feature rich To Do list
+- Easy ability to self host via cli or Docker
+- Application wide logging
+- SMTP support
+- Clean and simple UI
+- SQLite database support (more options coming)
+
+## Dependencies
+- Make sure you have sqlite3 installed locally
 
 ## Setup
-Initialise the database.
+Initialise the database and virtual environment.
 ```bash
-  make db
+  virtualenv venv
+  source venv/bin/active
+  venv/bin/pip install -r requirements.txt
+  make env db 
 ```
 
-Inspecting the database can be done using the Makefile also
+Please change any values needed in ```.env```
 
+
+## Run locally
+Run with the ```Makefile```
 ```bash
-  make db-view
+  make run
 ```
-
+You can run with debug mode enabled with the ```Makefile```
+```bash
+  make debug
+```
+## Building the Docker image
+Run with the ```Makefile```
+```bash
+  make build
+```
 ## Docker
 
-Run with docker-compose
+#### Run with docker-compose (development environment)
+
+```bash
+  make docker-dev
+```
+Please change any values needed in ```.env``` and ```docker-compose/docker-compose-dev.yaml```
+
+
+#### Run with docker-compose (production environment)
 
 ```bash
   make docker
 ```
+Please change any values needed in ```.env``` and ```docker-compose/docker-compose.yaml```
+
 
 ## Testing
 
@@ -41,6 +75,37 @@ Run Pytest against the code, including test coverage
   make test sast
 ```
 
+Inspecting the database can be done using the Makefile also
+
+```bash
+  make db-view
+```
+
+## Authors
+
+- [@michaelzdrav](https://www.github.com/michaelzdrav)
+
+## Screenshots
+### Creating a task:
+
+![](/screenshots/create-task.png)
+
+### Active tasks:
+
+![](/screenshots/active-tasks.png)
+
+### Done tasks:
+
+![](/screenshots/done-tasks.png)
+
+### First view upon login:
+
+![](/screenshots/first-login.png)
+
+### Email received after creating a task:
+
+![](/screenshots/legacy/new-task-email.png)
+
 ## Roadmap 
 Order depends on what I feel like working on when I have the free time 😃
 
@@ -49,14 +114,16 @@ Order depends on what I feel like working on when I have the free time 😃
 - ~~Introduction of testing using pytests, (#TODO check out https://flask.palletsprojects.com/en/2.2.x/tutorial/tests/)~~
 - ~~SMTP integration for notifications (task creation/overdue/comments left)~~
 ~~- Proper logging instead of just printing values everywhere~~
+- ~~Redesigned frontend using Bootstrap~~
+~~- Add edit & delete for comments~~
+~~ - Updated UI ~~
+~~- Deploying this in AWS~~
 - Add advanced pytests ⌛
 - Refactoring ⌛
   - Refactor create/update to use functions to check due_date 
-- Add ability to turn off default user test/test.
+- Input validation, text length limits for title, description, comments
 - Add settings page, configure timezones, store tasks in local timezones 
-- Add edit & delete for comments
 - Add get_task before anything that uses the existing task to check it exists
-- add a get_task_comment to every update/delete of comments
 - File uploads for each task
 - Add caching for performance
 - Switch to flask-sqlalchemy to support more db engines https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-iv-database 
@@ -68,20 +135,3 @@ Order depends on what I feel like working on when I have the free time 😃
   - Password Reset
   - Password complexity
   - Account verification
-- Deploying this in AWS
-  - Deploying in AWS for use
-  - Opening up the API for use
-
-
-## Authors
-
-- [@michaelzdrav](https://www.github.com/michaelzdrav)
-
-## Acknowledgements
-- Shout out to Flask tutorial for the frontend. I would have gone for a Bootstrap option but had this old tutorial project saved.
-
-## Screenshots
-![](/screenshots/creating-a-task.png)
-![](/screenshots/adding-a-comment.png)
-![](/screenshots/done-tasks.png)
-![](/screenshots/new-task-email.png)

@@ -11,10 +11,12 @@ services:
     ports:
       - '5001:5001'
     volumes:
-      - ./instance:/run/instance
+      - ../instance:/run/instance
     environment:
       - SECRET_KEY=test
       - MAIL_SERVER=mailcatcher
       - MAIL_PORT=1025
+      - MAIL_USE_TLS=1
+      - SMTP_ENABLED=True
     depends_on:
       - mailcatcher
