@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+
+<div class="row text-center mb-4">
+  <div class="col-md-12">
+    <h1>{{ title }}</h1>
+    <p>Hi, again!</p>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-4"></div>
+  <div class="col-md-4">
+    {{ wtf.quick_form(form) }}
+    <small>
+      Forgot password? 
+      <a href="{{ url_for('request_password_reset') }}">Reset here</a>.
+    </small>
+  </div>
+  <div class="col-md-4"></div>
+</div>
+
+{% endblock %}

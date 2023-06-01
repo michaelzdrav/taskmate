@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block app_content %}
+   <div class="row mt-2 mb-2 text-center">
+      <div class="col-md-12">
+         <h1>{{ title }}</h1>
+         <p class="lead">Taskmate is a free task management tool that helps you stay organised and on top of your work.
+            Taskmate, you can create tasks, set deadlines, track progress and receive email notifications.</p>
+      </div>
+   </div>   
+   <div class="row content">
+      <div class="col-md-3"></div>
+      <div class="col-md-6">
+         <h2 class="mt-5 text-center">Key Features</h2>
+         <ol >
+            <li>Create tasks with deadlines, descriptions and comments.</li>
+            <li>Move tasks between Active and Done status.</li>
+            <li>Receive emails regarding your tasks!</li>
+            <li>You can host this yourself (Source Code link at the top).</li>
+         </ol>
+      </div>
+      <div class="col-md-3"></div>
+   </div>
+   <div class="row text-center content">
+      <div class="col-md-12">
+         <p class="mt-5">Your first step to getting started is the login page. Here it is so you can get accustomed to it.</p>
+         <img src="https://github.com/michaelzdrav/taskmate/blob/main/screenshots/login-page.png?raw=true"
+            class="img-fluid mt-5 mx-auto" alt="Add a Comment" style="max-width: 70%;">
+         <p class="mt-5">Your next step is to create a task. Put as much detail as it needs!</p>
+         <img src="https://github.com/michaelzdrav/taskmate/blob/main/screenshots/create-task.png?raw=true"
+            class="img-fluid mt-5 mx-auto" alt="Create a Task" style="max-width: 70%;">
+         <br />
+         <p class="mt-5">Here is what your Active Tasks page will look like once you create some new tasks.</p>
+         <img src="https://github.com/michaelzdrav/taskmate/blob/main/screenshots/active-tasks.png?raw=true"
+            class="img-fluid mt-5 mx-auto" alt="Done Tasks" style="max-width: 70%;">
+         <br />
+         <p class="mt-5">You can expect your Done Tasks page to look like this when you complete your tasks.</p>
+         <img src="https://github.com/michaelzdrav/taskmate/blob/main/screenshots/done-tasks.png?raw=true"
+            class="img-fluid mt-5 mx-auto" alt="Done Tasks" style="max-width: 70%;">
+         <br />
+         <h2 class="mt-5">Contact Me</h2>
+         <p class="mt-3">Feel free to report any bugs in Github Issues, or reach out via LinkedIn.</p>         
+      </div>
+   </div>
+   <hr>
+   <footer class="text-center">
+      &copy; {{ moment().format('YYYY') }} Copyright - TaskMate
+   </footer>
+{% endblock %}

@@ -1,0 +1,15 @@
+.content {
+    padding: 20px;
+    font-size: 15px;
+}
+.content p {
+    line-height: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.content img {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+footer{ 
+    min-height:50px; 
+}

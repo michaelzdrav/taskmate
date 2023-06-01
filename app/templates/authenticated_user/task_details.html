@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block content %}
+
+<div class="row text-center mb-4">
+  <div class="col-md-12">
+    <h1>{{ title }}</h1>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
+    <div class="card" style="width: 40rem;">
+      <div class="card-body">
+        <h5 class="card-title">{{ task.title }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted label label-warning">{{ task.status }}</h6>
+        <p class="card-text">{{ task.body }}</p>
+        {% for comment in user_task_comments %}
+          <p> <strong>{{ comment.timestamp }}</strong>: <br> {{ comment.body }}</p>
+        {% endfor %}
+        <small class="text-muted text-secondary">Created on <strong>{{ moment(task.timestamp).format('lll') }}</strong> </small>
+        <hr>
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+          Edit Task
+        </button>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#commentModal">
+          Add Comment
+        </button>
+        <a class="btn btn-warning" href="{{ url_for('complete_task', title=task.title) }}">Complete</a>
+        <a class="btn btn-danger" href="{{ url_for('delete_task', title=task.title) }}">Delete</a>
+
+        <!-- Edit Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Edit task</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+                  </div>
+                  <div class="modal-body">
+                  {{ wtf.quick_form(form) }}
+                  </div>
+                  <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  </div>
+              </div>
+          </div>
+        </div>
+        <!-- End of modal -->
+
+        <!-- Comment Modal -->
+        <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                  <h5 class="modal-title" id="commentModalLabel">Add comment</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+                  </div>
+                  <div class="modal-body">
+                  {{ wtf.quick_form(comment_form) }}
+                  </div>
+                  <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  </div>
+              </div>
+          </div>
+        </div>
+        <!-- End of modal -->
+
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3"></div>
+</div>
+{% endblock %}
