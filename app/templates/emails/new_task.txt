@@ -1,0 +1,21 @@
+Dear {{ user.username }},
+
+Here are the details of a new task you have created.
+
+-----
+Title: 
+
+{{ body.title }}
+-----
+Due Date:
+
+{{ body.due_date }}
+-----
+Description:
+
+{{ body.description }}
+-----
+
+Sincerely,
+
+The TaskMate Team
