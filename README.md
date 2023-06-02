@@ -135,3 +135,53 @@ Order depends on what I feel like working on when I have the free time 😃
   - Password Reset
   - Password complexity
   - Account verification
+
+
+
+
+# Contribution
+
+These are some of the suggested contributions to **TaskMate**:
+
+- Refactor code to use the concept of separation of concerns (each functionality resides as a stand-alond module)
+  - Config module
+  - DB Schema
+  - Email
+  - Application instance
+  - Forms (using bootstrap to quicky generate and style them)
+  - Migrations (all changes to db schema available for review)
+- Modify the design of the database to support any engine
+  - The default is SQLite (it is small, quick to setup, does not require a server)
+  - If another is needed, then you can pass that as an environment variable in `.env`
+- Application instance:
+- Refactored the factory function `create_app()` to not only initialize the extention variables but also to log errors (1. On file and 2. Send log data to admin via email)
+- To ensure the emailing feature works all the time, locally and on a prod app, I have used Twilio Sendgrid (You will have to create your own accounts with Twilio and Sengrid. It is free.)
+- All static resources are put in individual files as seen in the static folder
+- Base template modified to truly make it a base that child templates find reusable elements only.
+- UI Updates are as seen below:
+
+### Landing page
+![Landing page](/app/static/img/landing_page.png)
+
+### Login Page
+![Login page](/app/static/img/login_page.png)
+
+- With links to register page, request password reset page and reset password page
+
+### Home Page
+![Home page](/app/static/img/home_page.png)
+
+### Create Task Page (Standalone)
+![Home page](/app/static/img/create_task_page.png)
+
+### Create Task (Home page)
+![Home create task page](/app/static/img/home_create_task_page.png)
+
+### View Task
+![View task page](/app/static/img/view_task_page.png)
+
+### Edit Task
+![Edit task page](/app/static/img/edit_task.png)
+
+### Comment on Task
+![Comment on task page](/app/static/img/comment_on_task.png)
