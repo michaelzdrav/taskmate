@@ -48,7 +48,7 @@
                     <h3 class="card-title">
                         <a href="{{ url_for('task_details', title=task.title) }}">{{ task.title }}</a>
                     </h3>
-                    <h6 class="card-subtitle mb-2 text-muted label label-warning">{{ task.status }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Due Date: <strong>{{ moment(task.due_date).format('ll') }}</strong> - <span class="label label-warning">{{ task.status }}</span></h6>
                     <p class="card-text">{{ task.body }}</p>
                     <small class="text-muted text-secondary">Created on <strong>{{ moment(task.timestamp).format('lll') }}</strong> </small>
                     </div>
@@ -65,7 +65,7 @@
                     <h3 class="card-title">
                         <a href="{{ url_for('task_details', title=task.title) }}">{{ task.title }}</a>
                     </h3>
-                    <h6 class="card-subtitle mb-2 text-muted label label-danger">{{ task.status }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Due Date: <strong>{{ moment(task.due_date).format('ll') }}</strong> - <span class="label label-danger">{{ task.status }}</span></h6>
                     <p class="card-text">{{ task.body }}</p>
                     <small class="text-muted text-secondary">Created on <strong>{{ moment(task.timestamp).format('lll') }}</strong> </small>
                     </div>
@@ -80,7 +80,7 @@
                   <div class="card">
                       <div class="card-body">
                       <h3 class="card-title">{{ task.title }}</h3>
-                      <h6 class="card-subtitle mb-2 text-muted label label-success">{{ task.status }}</h6>
+                      <h6 class="card-subtitle mb-2 text-muted">Due Date: <strong>{{ moment(task.due_date).format('ll') }}</strong> - <span class="label label-success">{{ task.status }}</span></h6>
                       <p class="card-text">{{ task.body }}</p>
                       <small class="text-muted text-secondary">Created on <strong>{{ moment(task.timestamp).format('lll') }}</strong> </small>
                       </div>

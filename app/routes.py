@@ -6,6 +6,7 @@ from app.forms import LoginForm, RegistrationForm, RequestPasswordResetForm, \
 from app.models import User, Task, TaskComment
 from werkzeug.urls import url_parse
 from app.email import send_password_reset_email
+from datetime import datetime, date
 
 
 @app.route('/')
@@ -163,6 +164,24 @@ def create_task():
         db.session.commit()
         flash('Task added.')
         return redirect(url_for('home'))
+    # Get all tasks
+    tasks = current_user.tasks.order_by(Task.timestamp.desc()).all()
+    # Loop through all the tasks
+    for new_task in tasks:
+
+        # print('Due date: ', str(new_task.due_date.date()))
+        # print('Today: ', str(date.today()))
+
+        # Get the due date of each task
+        date_obj = str(new_task.due_date.date())
+        # Find the date today
+        date_today = str(date.today())
+        # Compare the difference in the dates
+        if date_obj <= date_today:
+            # Update the status of each task
+            new_task.status = "Overdue"
+            db.session.commit()
+            flash(f'The task {new_task.title} is overdue.')
     return render_template(
         'authenticated_user/create_task.html',
         title='Create Task',

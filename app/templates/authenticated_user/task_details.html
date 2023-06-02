@@ -14,7 +14,14 @@
     <div class="card">
       <div class="card-body">
         <h3 class="card-title">{{ task.title }}</h3>
-        <h6 class="card-subtitle mb-2 text-muted label label-warning">{{ task.status }}</h6>
+        {% if task.status == 'Active' %}
+          <h6 class="card-subtitle mb-2 text-muted">Due Date: <strong>{{ moment(task.due_date).format('ll') }}</strong> - <span class="label label-warning">{{ task.status }}</span></h6>
+        {% elif task.status == 'Overdue' %}
+          <h6 class="card-subtitle mb-2 text-muted">Due Date: <strong>{{ moment(task.due_date).format('ll') }}</strong> - <span class="label label-danger">{{ task.status }}</span></h6>
+        {% else %}
+          <h6 class="card-subtitle mb-2 text-muted label">Due Date: <strong>{{ moment(task.due_date).format('ll') }}</strong> - <span class="label label-success">{{ task.status }}</span></h6>
+        {% endif %}
+        <br>
         <p class="card-text">{{ task.body }}</p>
         <small class="text-muted text-secondary">Created on <strong>{{ moment(task.timestamp).format('lll') }}</strong> </small>
         <hr>
@@ -42,7 +49,7 @@
           <div class="modal-dialog" role="document">
               <div class="modal-content">
                   <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Edit task</h5>
+                  <h3 class="modal-title" id="exampleModalLabel">Edit task</h3>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                   </button>
@@ -63,7 +70,7 @@
           <div class="modal-dialog" role="document">
               <div class="modal-content">
                   <div class="modal-header">
-                  <h5 class="modal-title" id="commentModalLabel">Add comment</h5>
+                  <h3 class="modal-title" id="commentModalLabel">Add comment to the task {{task.title}}</h3>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                   </button>
