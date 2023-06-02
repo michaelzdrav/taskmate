@@ -104,9 +104,15 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
-
-        <!-- Child templates -->
-        {% block app_content %}{% endblock %}
+        
+        <!-- Child templates --> 
+        {% if current_user.is_anonymous %}
+          {% block anonymous_content %}{% endblock %}
+        {% endif %}
+        {% if current_user.is_authenticated %}
+          {% block app_content %}{% endblock %}
+        {% endif %}
+               
     </div>
 {% endblock %}
 

@@ -17,3 +17,21 @@
 </div>
 
 {% endblock %}
+
+
+{% block anonymous_content %}
+
+<div class="row text-center mb-4">
+  <div class="col-md-12">
+    <h1>{{ title }}</h1>
+  </div>
+</div>
+<div class="row text-center">
+  <div class="col-md-4"></div>
+  <div class="col-md-4">
+    Return to the <a href="{{ url_for('index') }}">home page</a>
+  </div>
+  <div class="col-md-4"></div>
+</div>
+
+{% endblock %}
