@@ -154,11 +154,13 @@ These are some of the suggested contributions to **TaskMate**:
   - The default is SQLite (it is small, quick to setup, does not require a server)
   - If another is needed, then you can pass that as an environment variable in `.env`
 - Application instance:
-- Refactored the factory function `create_app()` to not only initialize the extention variables but also to log errors (1. On file and 2. Send log data to admin via email)
+  - Refactored the factory function `create_app()` to not only initialize the extention variables but also to log errors (1. On file and 2. Send log data to admin via email)
 - To ensure the emailing feature works all the time, locally and on a prod app, I have used Twilio Sendgrid (You will have to create your own accounts with Twilio and Sengrid. It is free.)
 - All static resources are put in individual files as seen in the static folder
 - Base template modified to truly make it a base that child templates find reusable elements only.
-- UI Updates are as seen below:
+
+
+## UI Updates are as seen below:
 
 ### Landing page
 ![Landing page](/app/static/img/landing_page.png)
