@@ -39,40 +39,55 @@
           </div>
       </div>
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <h3>Active Tasks ({{ num_active_tasks }})</h3>
           {% for task in tasks %} 
               {% if task.status == 'Active' %}
-                  <div class="card" style="width: 25rem;">
-                      <div class="card-body">
-                          <h5 class="card-title">
-                              <a href="{{ url_for('task_details', title=task.title) }}">{{ task.title }}</a>
-                          </h5>
-                          <h6 class="card-subtitle mb-2 text-muted label label-warning">{{ task.status }}</h6>
-                          <p class="card-text">{{ task.body }}</p>
-                          <small class="text-muted text-secondary">Created on <strong>{{ moment(task.timestamp).format('lll') }}</strong> </small>
-                      </div>
-                  </div>
+                <div class="card">
+                    <div class="card-body">
+                    <h3 class="card-title">
+                        <a href="{{ url_for('task_details', title=task.title) }}">{{ task.title }}</a>
+                    </h3>
+                    <h6 class="card-subtitle mb-2 text-muted label label-warning">{{ task.status }}</h6>
+                    <p class="card-text">{{ task.body }}</p>
+                    <small class="text-muted text-secondary">Created on <strong>{{ moment(task.timestamp).format('lll') }}</strong> </small>
+                    </div>
+                </div>
               {% endif %}   
           {% endfor %}
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
           <h3>Overdue Tasks ({{ num_overdue_tasks }})</h3>
          {% for task in tasks %}
               {% if task.status == 'Overdue' %}
-                  <div class="card" style="width: 25rem;">
-                      <div class="card-body">
-                          <h5 class="card-title">
-                              <a href="{{ url_for('task_details', title=task.title) }}">{{ task.title }}</a>
-                          </h5>
-                          <h6 class="card-subtitle mb-2 text-muted label label-warning">{{ task.status }}</h6>
-                          <p class="card-text">{{ task.body }}</p>
-                          <small class="text-muted text-secondary">Due on <strong>{{ moment(task.due_date).format('lll') }}</strong> </small>
-                      </div>
-                  </div>
+                <div class="card">
+                    <div class="card-body">
+                    <h3 class="card-title">
+                        <a href="{{ url_for('task_details', title=task.title) }}">{{ task.title }}</a>
+                    </h3>
+                    <h6 class="card-subtitle mb-2 text-muted label label-danger">{{ task.status }}</h6>
+                    <p class="card-text">{{ task.body }}</p>
+                    <small class="text-muted text-secondary">Created on <strong>{{ moment(task.timestamp).format('lll') }}</strong> </small>
+                    </div>
+                </div>
               {% endif %} 
          {% endfor %}
         </div>
+        <div class="col-md-4">
+            <h3>Completed Tasks ({{ num_completed_tasks }})</h3>
+           {% for task in tasks %}
+                {% if task.status == 'Completed' %}
+                  <div class="card">
+                      <div class="card-body">
+                      <h3 class="card-title">{{ task.title }}</h3>
+                      <h6 class="card-subtitle mb-2 text-muted label label-success">{{ task.status }}</h6>
+                      <p class="card-text">{{ task.body }}</p>
+                      <small class="text-muted text-secondary">Created on <strong>{{ moment(task.timestamp).format('lll') }}</strong> </small>
+                      </div>
+                  </div>
+                {% endif %} 
+           {% endfor %}
+          </div>
       </div>
     </div>
 

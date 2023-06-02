@@ -137,13 +137,16 @@ def home():
     num_active_tasks = len(active_tasks)
     overdue_tasks = current_user.tasks.filter_by(status='Overdue').all()
     num_overdue_tasks = len(overdue_tasks)
+    completed_tasks = current_user.tasks.filter_by(status='Completed').all()
+    num_completed_tasks = len(completed_tasks)
     return render_template(
         'authenticated_user/home.html',
         title='Home',
         form=form,
         tasks=tasks,
         num_active_tasks=num_active_tasks,
-        num_overdue_tasks=num_overdue_tasks)
+        num_overdue_tasks=num_overdue_tasks,
+        num_completed_tasks=num_completed_tasks)
 
 
 @app.route('/create-task', methods=['GET', 'POST'])
@@ -170,6 +173,7 @@ def create_task():
 @login_required
 def task_details(title):
     task = Task.query.filter_by(title=title).first()
+    task_comment = TaskComment.query.filter_by(task_id=task.id).first()
     user_task_comments = task.task_comments.all()
     form = CreateTaskForm()
     comment_form = TaskCommentForm()
@@ -180,19 +184,18 @@ def task_details(title):
         task.due_date = form.due_date.data
         db.session.commit()
         flash('Edits saved.')
-        return redirect(url_for('home'))
+        return redirect(url_for('edit_task', title=task.title))
     # Add a comment to a task
     if comment_form.submit_comment.data and comment_form.validate():
         task_comment = TaskComment(body=comment_form.body.data, task_id=task.id)
         db.session.add(task_comment)
         db.session.commit()
         flash(f'Comment to the task {task.title} saved.')
-        return redirect(url_for('task_details'))
+        return redirect(url_for('task_details', title=task.title))
     if request.method == 'GET':
         form.title.data = task.title
         form.body.data = task.body
         form.due_date.data = task.due_date
-        comment_form.body.data = task.body
     return render_template(
         'authenticated_user/task_details.html',
         title='Task Details',

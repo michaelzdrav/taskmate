@@ -13,3 +13,14 @@
 footer{ 
     min-height:50px; 
 }
+.card {
+    border: 1px solid #d7d7d7;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+}
+.my-forms {
+    border: 1px solid #d7d7d7;
+    padding: 10px;
+    border-radius: 10px;
+}
