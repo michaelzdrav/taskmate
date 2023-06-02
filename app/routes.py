@@ -178,10 +178,11 @@ def create_task():
         date_today = str(date.today())
         # Compare the difference in the dates
         if date_obj <= date_today:
-            # Update the status of each task
-            new_task.status = "Overdue"
-            db.session.commit()
-            flash(f'The task {new_task.title} is overdue.')
+            if new_task.status != 'Completed':
+                # Update the status of each task
+                new_task.status = "Overdue"
+                db.session.commit()
+                flash(f'The task {new_task.title} is overdue.')
     return render_template(
         'authenticated_user/create_task.html',
         title='Create Task',
