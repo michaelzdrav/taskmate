@@ -7,11 +7,7 @@ services:
       - '1025:1025'
 
   taskmate:
-<<<<<<< HEAD
-    image: taskmate
-=======
     image: mz1234/taskmate:11
->>>>>>> 2face6d8129ad187df9b01380514cd7facf2b2ca
     ports:
       - '80:5001'
     volumes:
