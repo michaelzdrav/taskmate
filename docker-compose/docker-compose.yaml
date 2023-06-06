@@ -1,9 +1,13 @@
 version: '3'
 services:
   taskmate:
+<<<<<<< HEAD
     image: mz1234/taskmate:latest
+=======
+    image: mz1234/taskmate:11
+>>>>>>> 2face6d8129ad187df9b01380514cd7facf2b2ca
     ports:
-      - '5001:5001'
+      - '80:5001'
     volumes:
       - ../instance:/run/instance
     environment:
