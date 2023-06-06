@@ -135,3 +135,6 @@ Order depends on what I feel like working on when I have the free time 😃
   - Password Reset
   - Password complexity
   - Account verification
+- Fix text wrapping on mobile/desktop view
+- Pytest for Flask-SQLAlchemy: https://github.com/jeancochrane/pytest-flask-sqlalchemy
+- Regular Pytest

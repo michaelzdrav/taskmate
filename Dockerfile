@@ -6,7 +6,7 @@ WORKDIR /run
 # Copy requirements.txt and install dependencies
 RUN python -m venv venv
 COPY requirements.txt ./requirements.txt
-RUN venv/bin/pip install -r requirements.txt
+RUN venv/bin/pip3 install -r requirements.txt
 
 # Copy required code
 COPY web ./web

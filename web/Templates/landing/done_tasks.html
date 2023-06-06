@@ -68,17 +68,17 @@
           <ul class="list-group">
             {% for task in tasks %}
             <li class="list-group-item">
-              {% if task['due_date'] %}
-              <a class="badge mt-0 bg-info text-light">{{ task['due_date'].strftime('%d/%m/%Y') }}</a>
+              {% if task.due_date %}
+              <a class="badge mt-0 bg-info text-light">{{ task.due_date.strftime('%d/%m/%Y') }}</a>
               {% else %}
               <a class="badge mt-0 bg-info text-light">No due date.</a>
               {% endif %}
               {# <b class="badge mt-0"> PROJECT-000</b> #}
               <br />
               <button class="btn btn-link btn-lg"
-                onclick="document.getElementById('task-form-{{ task['id'] }}').submit();">{{ task['title'] }}</button>
+                onclick="document.getElementById('task-form-{{ task.id }}').submit();">{{ task.title }}</button>
 
-              <form id="task-form-{{ task['id'] }}" action="{{ url_for('landing.load_doneview', id=task['id']) }}"
+              <form id="task-form-{{ task.id }}" action="{{ url_for('landing.load_doneview', id=task.id) }}"
                 method="post">
                 <button type="submit" style="display: none;"></button>
               </form>
@@ -91,10 +91,10 @@
     <div class="col-md-9 bg-light task-list border-top border-left shadow-sm">
       <div class="row mb-1 mt-1">
         {% for task in tasks %}
-        {% if task['id'] == view['id'] %}
+        {% if task.id == view.id %}
         <div class="col-md-2">
           <div class="post">
-            <form action="{{ url_for('landing.delete', id=task['id']) }}" method="post">
+            <form action="{{ url_for('landing.delete', id=task.id) }}" method="post">
               <input class="danger btn-sm btn-outline-danger" type="submit" value="Delete Task"
                 onclick="return confirm('Delete task?');">
               <noscript>
@@ -118,9 +118,9 @@
             <b>Task Description</b>
             <hr />
             {% for task in tasks %}
-            {% if task['id'] == view['id'] %}
-            {% if task['body'] %}
-            {{ task['body'] }}
+            {% if task.id == view.id %}
+            {% if task.body %}
+            {{ task.body }}
             {% else %}
             No description set.
             {% endif %}
@@ -132,7 +132,7 @@
             <div class="post">
               <button class="add btn btn-outline-primary" onclick="toggleCommentSection('{{ tasks.index(task) }}')"
                 onButt>Add a comment</button>
-              <form class="mt-2" action="{{ url_for('landing.add_comment', id=task['id']) }}" method="post">
+              <form class="mt-2" action="{{ url_for('landing.add_comment', id=task.id) }}" method="post">
                 <div id="commentSection{{ tasks.index(task) }}" class="d-none">
                   <textarea class="form-control" name="comment" id="comment" value=""></textarea>
                   <input class="btn btn-success mt-2" id="save" name="save" type="submit" value="Save">
@@ -144,16 +144,16 @@
             </div>
 
             {% for comment in comments %}
-            {% if comment['task_id'] == view['id'] %}
+            {% if comment.task_id == view.id %}
             <hr class="comment">
             <p>
-              Commented on: {{ comment['created']}}
+              Commented on: {{ comment.created}}
             </p>
             <p>
-              {{ comment['content'] }}
+              {{ comment.content }}
             </p>
             <div class="post">
-              <form action="{{ url_for('landing.delete_comment', id=comment['id'], task=task['id']) }}" method="post">
+              <form action="{{ url_for('landing.delete_comment', id=comment.id, task=task.id) }}" method="post">
                 <input class="btn btn-outline-danger" type="submit" value="Delete comment"
                   onclick="return confirm('Delete comment?');">
                 <noscript>
@@ -177,33 +177,37 @@
             <table class="table">
               <tbody>
                 {% for task in tasks %}
-                {% if task['id'] == view['id'] %}
+                {% if task.id == view.id %}
                 <tr>
                   <th scope="row">Status</th>
-                  <td>{{ task['status'] }}</td>
+                  <td>{{ task.status }}</td>
                 </tr>
                 <tr>
                   <th scope="row">Due Date</th>
-                  {% if task['due_date'] %}
-                  {% if task['STATUS'] == "OVERDUE" %}
-                  <td><a class="badge mt-0 bg-danger text-light">{{ task['due_date'].strftime('%d/%m/%Y') }}</a>
+                  {% if task.due_date %}
+                  {% if task.status == "OVERDUE" %}
+                  <td><a class="badge mt-0 bg-danger text-light">{{ task.due_date.strftime('%d/%m/%Y') }}</a>
                   </td>
                   {% else %}
-                  <td><a class="badge mt-0 bg-success text-light">{{ task['due_date'].strftime('%d/%m/%Y') }}</a>
+                  <td><a class="badge mt-0 bg-success text-light">{{ task.due_date.strftime('%d/%m/%Y') }}</a>
                   </td>
                   {% endif %}
+                  {% else %}
+                  <td><a
+                     class="badge mt-0 bg-info text-light">No due date.</a>
+                  </td>
                   {% endif %}
                 </tr>
                 <tr>
                   <th scope="row">Created On</th>
-                  <td>{{ task['created'] }}</td>
+                  <td>{{ task.created }}</td>
                 </tr>
                 <tr>
                   <th scope="row">Created By</th>
-                  {% if task['author_id'] == g.user['id'] %}
-                  <td>{{ g.user['username'] }}</td>
+                  {% if task.author_id == g.user.id %}
+                  <td>{{ g.user.username }}</td>
                   {% else %}
-                  <td>{{ task['author_id'] }}</td>
+                  <td>{{ task.author_id }}</td>
                   {% endif %}
                 </tr>
                 {% endif %}
@@ -227,7 +231,7 @@
         <h3 class="card-title mb-3 font-weight-normal text-center">No tasks in <i>Done</i> status 😱</h3>
       </div>
       <div class="card-body">
-        <p class="font-weight-normal text-center">Hi {{ g.user['username'] }}, try move a task to <i>Done</i> and come
+        <p class="font-weight-normal text-center">Hi {{ g.user.username }}, try move a task to <i>Done</i> and come
           back to see your tasks.</p>
         <hr>
         <div class="d-flex justify-content-center align-items-center">

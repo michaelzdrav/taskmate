@@ -4,7 +4,11 @@ from flask import Flask
 from dotenv import load_dotenv
 from flask_mail import Mail
 from logging.config import dictConfig
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
+db = SQLAlchemy()
+migrate = Migrate()
 mail = Mail()
 
 def create_app(test_config=None):
@@ -36,7 +40,9 @@ def create_app(test_config=None):
  
     app.config.from_mapping(
         SECRET_KEY=os.getenv("SECRET_KEY"),
-        DATABASE=os.path.join(app.instance_path, 'web.sqlite'),
+        SQLALCHEMY_DATABASE_URI=os.getenv("SQLALCHEMY_DATABASE_URI") or \
+        "sqlite:////instance/web.sqlite",
+        # DATABASE=os.path.join(app.instance_path, 'web.sqlite'),
         # MAIL_SERVER = os.environ.get('MAIL_SERVER'),
         # MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25),
         # ADMINS = ['your-email@example.com'],
@@ -50,7 +56,7 @@ def create_app(test_config=None):
     else:
         app.logger.info('SMTP is not enabled.')
 
-    app.logger.info('Using database at %s', os.path.join(app.instance_path, 'web.sqlite'))
+    app.logger.info('Using database at %s', app.config['SQLALCHEMY_DATABASE_URI'])
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -65,8 +71,9 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    from . import db
     db.init_app(app)
+    migrate.init_app(app, db)
+    from . import models
     # mail = Mail(app)
 
     from . import auth

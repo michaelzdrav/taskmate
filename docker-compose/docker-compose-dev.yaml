@@ -7,7 +7,7 @@ services:
       - '1025:1025'
 
   taskmate:
-    image: mz1234/taskmate
+    image: taskmate
     ports:
       - '5001:5001'
     volumes:
@@ -18,5 +18,17 @@ services:
       - MAIL_PORT=1025
       - MAIL_USE_TLS=1
       - SMTP_ENABLED=True
+      - SQLALCHEMY_DATABASE_URI=postgresql://admin:password@postgresql:5432/taskmate
     depends_on:
       - mailcatcher
+  postgresql:
+    image: postgres
+    container_name: basic-postgresql
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=taskmate
+    ports:
+      - 5432:5432
+    volumes:
+      - /tmp/postgresql:/var/lib/postgresql/data
