@@ -146,7 +146,6 @@ def home():
             file_path_list = file_path.split('/')
             if 'static' in file_path_list:
                 static_index = file_path_list.index('static') + 1
-                print(static_index, 'static index')
             file_path_list_from_static_folder = file_path.split('/')[static_index:]
             new_file_path = '/'.join(file_path_list_from_static_folder)
             task.file = new_file_path
@@ -215,7 +214,6 @@ def create_task():
             file_path_list = file_path.split('/')
             if 'static' in file_path_list:
                 static_index = file_path_list.index('static') + 1
-                print(static_index, 'static index')
             file_path_list_from_static_folder = file_path.split('/')[static_index:]
             new_file_path = '/'.join(file_path_list_from_static_folder)
             task.file = new_file_path
@@ -275,7 +273,6 @@ def task_details(title):
             file_path_list = file_path.split('/')
             if 'static' in file_path_list:
                 static_index = file_path_list.index('static') + 1
-                print(static_index, 'static index')
             file_path_list_from_static_folder = file_path.split('/')[static_index:]
             task.file = file_path_list_from_static_folder
 

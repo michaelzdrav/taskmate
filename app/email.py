@@ -27,15 +27,15 @@ def send_password_reset_email(user):
             "emails/reset_password.html", user=user, token=token))
 
 
-# New task email
+# Overdue task email
 
-def send_new_task_email(user):
+def overdue_task_email_notification(user, task):
     """Update user of new task"""
     send_email(
-        "[Taskmate] New Task",
+        "[Taskmate] Overdue Task",
         sender=app.config['MAIL_DEFAULT_SENDER'],
         recipients=[user.email],
         text_body=render_template(
-            "emails/new_task.txt", user=user),
+            "emails/overdue_task.txt", user=user, task=task),
         html_body=render_template(
-            "emails/new_task.html", user=user))
+            "emails/overdue_task.html", user=user, task=task))
