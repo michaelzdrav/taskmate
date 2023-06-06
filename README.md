@@ -120,20 +120,21 @@ Order depends on what I feel like working on when I have the free time 😃
 ~~- Deploying this in AWS~~
 - Add advanced pytests ⌛
 - Refactoring ⌛
-  - Refactor create/update to use functions to check due_date 
-- Input validation, text length limits for title, description, comments
+  - ~~Refactor create/update to use functions to check due_date~~
+- ~~Input validation, text length limits for title, description, comments~~
 - Add settings page, configure timezones, store tasks in local timezones 
-- Add get_task before anything that uses the existing task to check it exists
+- ~~Add get_task before anything that uses the existing task to check it exists~~
 - File uploads for each task
 - Add caching for performance
-- Switch to flask-sqlalchemy to support more db engines https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-iv-database 
+- ~~Switch to flask-sqlalchemy to support more db engines https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-iv-database~~
 - Introduce background tasks with celery (for emails etc) to reduce waiting times 
   - https://flask.palletsprojects.com/en/2.3.x/patterns/celery/
+  - ~~I have used a thread instead of celery~~
 - Improve security
   - Flask-talisman
   - Flask-paranoid
-  - Password Reset
-  - Password complexity
+  - ~~Password Reset~~
+  - ~~Password complexity~~
   - Account verification
 
 
@@ -165,25 +166,39 @@ These are some of the suggested contributions to **TaskMate**:
 ### Landing page
 ![Landing page](/app/static/img/landing_page.png)
 
-### Login Page
-![Login page](/app/static/img/login_page.png)
+### Login
+
+| Login page | Login page with password validation   |
+|-------------------- | ------------------------ |
+| ![Login page](/app/static/img/login_page.png) |  ![Login page password validation](/app/static/img/password_validation.png)  |
+
+
 
 - With links to register page, request password reset page and reset password page
 
 ### Home Page
-![Home page](/app/static/img/home_page.png)
 
-### Create Task Page (Standalone)
-![Home page](/app/static/img/create_task_page.png)
+| Home page (without task) | Home page with task   |
+|-------------------- | ------------------------ |
+| ![Home page without task](/app/static/img/home_page_without_task.png) | ![Home page](/app/static/img/home_page_updated_with_task.png) |
 
-### Create Task (Home page)
-![Home create task page](/app/static/img/home_create_task_page.png)
 
-### View Task
-![View task page](/app/static/img/view_task_page.png)
+### Create Task Page
 
-### Edit Task
-![Edit task page](/app/static/img/edit_task.png)
+| Create tasks (home page) | Create tasks (standalone page)   |
+|-------------------- | ------------------------ |
+| ![Home page](/app/static/img/create_task_home_page_updated_with_file_upload.png) |  ![Home create task page](/app/static/img/home_create_task_standalone_page_updated_with_file_upload.png)  |
+
+
+### Task Details
+
+| View task | Edit task   |
+|-------------------- | ------------------------ |
+| ![View task page](/app/static/img/view_task_page_updated_with_file_upload.png) |  ![Edit task page](/app/static/img/edit_task_updated_with_file_upload.png) |
+
 
 ### Comment on Task
-![Comment on task page](/app/static/img/comment_on_task.png)
+
+| Add comment to task | View task with comment   |
+|-------------------- | ------------------------ |
+| ![Add comment to task](/app/static/img/comment_on_task_updated_with_file_upload.png) |  ![View tas with comment](/app/static/img/view_task_with_comment.png)  |
