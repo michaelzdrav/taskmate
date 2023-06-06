@@ -108,6 +108,16 @@ class RegistrationForm(FlaskForm):
         if user is not None:
             raise ValidationError('Please use a different email address.')
 
+
+class VerifyForm(FlaskForm):
+    """Email token verification form"""
+    token = StringField(
+        'Token',
+        validators=[DataRequired()],
+        render_kw={'autofocus': True, 'placeholder': 'Enter token sent'})
+    submit = SubmitField('Verify')
+
+
 # -----------------------
 # End of user registration
 # -----------------------
@@ -156,5 +166,5 @@ class TaskCommentForm(FlaskForm):
 
 
 # -----------------------
-# End of edit profiel
+# End of edit profile
 # -----------------------
