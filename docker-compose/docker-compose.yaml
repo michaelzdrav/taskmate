@@ -1,17 +1,17 @@
 version: '3'
 services:
   taskmate:
-    image: mz1234/taskmate
+    image: mz1234/taskmate:latest
     ports:
       - '5001:5001'
     volumes:
       - ../instance:/run/instance
     environment:
       - SECRET_KEY=<key>
-      - MAIL_SERVER=mailcatcher
+      - MAIL_SERVER=changeme
       - MAIL_PORT=1025
       - MAIL_USE_TLS=1
       - MAIL_USERNAME=<username>
       - MAIL_PASSWORD=<password>
       - SMTP_ENABLED=True
-
+      - SQLALCHEMY_DATABASE_URI=postgresql://username:password@host:port/db_name

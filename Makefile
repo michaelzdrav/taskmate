@@ -28,14 +28,14 @@ docker:
 install: env
 	virtualenv venv; \
 	source venv/bin/activate; \
-	pip install -r requirements.txt;
+	pip3 install -r requirements.txt;
 
 dependencies:
 	python -m pip install -r requirements.txt
-	pip install -e .
+	pip3 install -e .
 
 sast:
-	pip install bandit
+	pip3 install bandit
 	bandit -r web
 
 test:
