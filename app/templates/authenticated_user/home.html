@@ -48,7 +48,15 @@
                     <h3 class="card-title">
                         <a href="{{ url_for('task_details', title=task.title) }}">{{ task.title }}</a>
                     </h3>
-                    <h6 class="card-subtitle mb-2 text-muted">Due Date: <strong>{{ moment(task.due_date).format('ll') }}</strong> - <span class="label label-warning">{{ task.status }}</span></h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Due Date: <strong>{{ moment(task.due_date).format('ll') }}</strong> - 
+                    {% if task.status == 'Active' %}
+                        <span class="label label-warning">{{ task.status }}</span>
+                    {% elif task.status == 'Overdue' %}
+                        <span class="label label-danger">{{ task.status }}</span>
+                    {% else %}
+                        <span class="label label-success">{{ task.status }}</span>
+                    {% endif %}
+                    </h6>
                     <p class="card-text">{{ task.body }}</p>
                     <small class="text-muted text-secondary">Created on <strong>{{ moment(task.timestamp).format('lll') }}</strong> </small>
                     </div>

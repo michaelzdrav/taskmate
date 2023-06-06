@@ -27,3 +27,6 @@ class Config(object):
     TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID')
     TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN')
     TWILIO_VERIFY_SERVICE_ID = os.environ.get('TWILIO_VERIFY_SERVICE_ID')
+
+    # File upload
+    UPLOAD_PATH = os.environ.get('UPLOAD_PATH') or 'static/img/uploads'

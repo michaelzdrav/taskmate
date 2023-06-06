@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% import 'bootstrap/wtf.html' as wtf %}
 
-{% block content %}
+{% block app_content %}
 
 <div class="row text-center mb-4">
   <div class="col-md-12">
@@ -21,7 +21,7 @@
         {% else %}
           <h6 class="card-subtitle mb-2 text-muted label">Due Date: <strong>{{ moment(task.due_date).format('ll') }}</strong> - <span class="label label-success">{{ task.status }}</span></h6>
         {% endif %}
-        <br>
+        <img class="img_auth_user img img-fluid" style="width: 100%; height: auto;" src="{{ url_for('static', filename=task.file) }}" alt="{{ task.title }}">
         <p class="card-text">{{ task.body }}</p>
         <small class="text-muted text-secondary">Created on <strong>{{ moment(task.timestamp).format('lll') }}</strong> </small>
         <hr>
@@ -38,7 +38,7 @@
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
           Edit Task
         </button>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#commentModal">
+        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#commentModal">
           Add Comment
         </button>
         <a class="btn btn-warning" href="{{ url_for('complete_task', title=task.title) }}">Complete</a>

@@ -1,8 +1,8 @@
 """all tables
 
-Revision ID: 2ff389317773
+Revision ID: 99a1130473bd
 Revises: 
-Create Date: 2023-06-01 17:42:18.894676
+Create Date: 2023-06-06 23:07:17.054886
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '2ff389317773'
+revision = '99a1130473bd'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,7 +24,7 @@ def upgrade():
     sa.Column('email', sa.String(length=128), nullable=False),
     sa.Column('password_hash', sa.String(length=128), nullable=True),
     sa.Column('timestamp', sa.DateTime(), nullable=False),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_user'))
     )
     with op.batch_alter_table('user', schema=None) as batch_op:
         batch_op.create_index(batch_op.f('ix_user_email'), ['email'], unique=True)
@@ -34,20 +34,21 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(length=64), nullable=False),
     sa.Column('body', sa.String(length=300), nullable=False),
+    sa.Column('file', sa.String(length=64), nullable=True),
     sa.Column('status', sa.String(length=64), nullable=False),
     sa.Column('due_date', sa.DateTime(), nullable=False),
     sa.Column('timestamp', sa.DateTime(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id')
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], name=op.f('fk_task_user_id_user'), ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_task'))
     )
     op.create_table('task_comment',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('body', sa.String(length=300), nullable=False),
     sa.Column('timestamp', sa.DateTime(), nullable=False),
     sa.Column('task_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['task_id'], ['task.id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id')
+    sa.ForeignKeyConstraint(['task_id'], ['task.id'], name=op.f('fk_task_comment_task_id_task'), ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_task_comment'))
     )
     # ### end Alembic commands ###
 

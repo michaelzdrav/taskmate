@@ -4,6 +4,7 @@ from wtforms import StringField, SubmitField, PasswordField, BooleanField,\
 from wtforms.validators import DataRequired, Length, EqualTo, Email, \
     Regexp, ValidationError
 from app.models import User
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 
 # -----------------------
@@ -129,6 +130,9 @@ class CreateTaskForm(FlaskForm):
         render_kw={'autofocus':True, 'placeholder': 'Markdown enabled'})
     due_date = DateField(
         'Due Date', validators=[DataRequired()])
+    file = FileField(
+        'Attach File',
+        validators=[FileAllowed(['png', 'gif', 'jpg', 'jpeg', 'pdf'], 'PDF and pictures only!')])
     submit = SubmitField('Create')
 
 

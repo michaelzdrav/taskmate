@@ -24,3 +24,8 @@ footer{
     padding: 10px;
     border-radius: 10px;
 }
+.img_auth_user {
+    box-shadow: #0000003d 0px 3px 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+}

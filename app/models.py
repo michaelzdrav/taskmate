@@ -56,6 +56,7 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64), nullable=False)
     body = db.Column(db.String(300), nullable=False)
+    file = db.Column(db.String(64))
     status = db.Column(db.String(64), default='Active', nullable=False)
     due_date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
