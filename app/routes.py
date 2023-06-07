@@ -96,7 +96,7 @@ def verify_email_token():
 
             if check_email_verification_token(email, form.token.data):
                 user = User(username=username, email=email)
-                user.set_password(password)
+                user.password_hash = password
                 db.session.add(user)
                 db.session.commit()
                 del session['username']

@@ -1,4 +1,4 @@
-from app import app
+from app import app, db
 from flask import render_template
 
 
@@ -9,4 +9,5 @@ def not_found(error):
 
 @app.errorhandler(500)
 def unexpected_error(error):
+    db.session.rollback()
     return render_template('errors/500.html', title='Unexpected Error'), 500
