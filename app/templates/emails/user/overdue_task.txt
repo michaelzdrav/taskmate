@@ -1,0 +1,14 @@
+Dear {{ user.username }},
+
+You have a task that is overdue: <br><br>
+    
+Title: {{ task.title }}
+Body: {{ task.body }}
+Due Date: {{ task.due_date }}
+
+You can review this task and take action by clicking on this link:
+
+{{ url_for('user.home', _external=True) }}
+
+Sincerely,
+The TaskMate Team.

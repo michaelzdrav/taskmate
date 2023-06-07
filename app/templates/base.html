@@ -1,0 +1,133 @@
+{% extends 'bootstrap/base.html' %}
+
+<!-- Link all style files here -->
+{% block head %}
+    {{  super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/custom.css') }}">
+{% endblock %}
+
+<!-- The title of our application is defined here -->
+{% block title %}
+    {% if title %}
+        {{ title }} - TaskMate
+    {% else %}
+    TaskMate
+    {% endif %}
+{% endblock %}
+
+<!-- This is the navbar -->
+{% block navbar %}
+  <nav class="navbar navbar-default">
+      <div class="container-fluid">
+          <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href=" {{ url_for('main.index') }} ">TaskMate 📝</a>
+          </div>
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">                          
+                {% if current_user.is_authenticated %}
+                  <ul class="nav navbar-nav">
+                    <li class="nav-item">                    
+                      <a class="nav-link" href="{{ url_for('user.home') }}">
+                        <button type="button" class="btn text-white bg-primary">
+                          Task Details
+                        </button>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="{{ url_for('user.create_task') }}">
+                        <button type="button" class="btn text-white bg-success">
+                          Create a task
+                        </button>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="https://www.github.com/michaelzdrav/taskmate" target="_blank"
+                        rel="noopener noreferrer">
+                        <button type="button" class="btn text-white bg-info">
+                          Source code
+                        </button>
+                      </a>
+                    </li>                  
+                  </ul>
+                  <ul class="nav navbar-nav navbar-right">
+                    <li class="nav-item">
+                      <span class="navbar-text mr-3">
+                        <span class="font-weight-bold">                        
+                          <p  class="btn btn-outline-info">
+                            Hello {{ current_user.username }} 👋
+                          </p>
+                        </span>
+                      </span>
+                    </li>                  
+                    <li class="nav-item">
+                      <a href="{{ url_for('auth.logout') }}">
+                        <button type="button" class="btn text-white bg-warning">
+                          Logout
+                        </button>
+                      </a>
+                  </ul>
+                {% else %}
+                  <ul class="nav navbar-nav navbar-right">
+                    <li class="nav-item">
+                      <a href="{{ url_for('auth.register') }}">
+                        <button type="button" class="btn btn-outline-info">
+                          <img width="25" height="25" src="https://img.icons8.com/sf-regular-filled/48/add-user-male.png" alt="add-user-male" /> Sign up
+                        </button>                        
+                      </a>
+                    </li>                
+                    <li class="nav-item">
+                      <a href="{{ url_for('auth.login') }}">
+                        <button type="button" class="btn btn-outline-warning">
+                          <img width="25" height="25" src="https://img.icons8.com/sf-regular-filled/23/login-rounded-down.png" alt="login-rounded-down" /> Login
+                        </button>                        
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href=" https://www.github.com/michaelzdrav/taskmate " target="_blank">
+                        <button type="button" class="btn btn-outline-warning">
+                          <img width="25" height="25" src="https://img.icons8.com/?size=512&id=62856&format=png" alt="login-rounded-down" /> Source Code
+                        </button>     
+                      </a>
+                    </li>
+                  </ul>
+                {% endif %}                    
+          </div>
+      </div>
+  </nav>
+{% endblock %}
+
+<!-- Contents of all our pages will go here -->
+{% block content %}
+    <div class="container">
+        <!-- Flash message -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-info" role="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Child templates --> 
+        {% if current_user.is_anonymous %}
+          {% block anonymous_content %}{% endblock %}
+        {% endif %}
+        {% if current_user.is_authenticated %}
+          {% block app_content %}{% endblock %}
+        {% endif %}
+               
+    </div>
+{% endblock %}
+
+<!-- All scripts will go here -->
+{% block scripts %}
+    {{  super() }}
+    <!-- MomentJS -->
+    {{ moment.include_moment() }}
+    
+{% endblock %}

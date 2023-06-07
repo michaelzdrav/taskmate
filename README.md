@@ -120,18 +120,152 @@ Order depends on what I feel like working on when I have the free time 😃
 ~~- Deploying this in AWS~~
 - Add advanced pytests ⌛
 - Refactoring ⌛
-  - Refactor create/update to use functions to check due_date 
-- Input validation, text length limits for title, description, comments
+  - ~~Refactor create/update to use functions to check due_date~~
+- ~~Input validation, text length limits for title, description, comments~~
 - Add settings page, configure timezones, store tasks in local timezones 
-- Add get_task before anything that uses the existing task to check it exists
-- File uploads for each task
+- ~~Add get_task before anything that uses the existing task to check it exists~~
+- ~~File uploads for each task~~
 - Add caching for performance
-- Switch to flask-sqlalchemy to support more db engines https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-iv-database 
+- ~~Switch to flask-sqlalchemy to support more db engines https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-iv-database~~
 - Introduce background tasks with celery (for emails etc) to reduce waiting times 
   - https://flask.palletsprojects.com/en/2.3.x/patterns/celery/
+    - ~~I have used a thread instead of celery~~
 - Improve security
   - Flask-talisman
   - Flask-paranoid
-  - Password Reset
-  - Password complexity
-  - Account verification
+  - ~~Password Reset~~
+  - ~~Password complexity~~
+  - ~~Account verification~~ (using Twilio Verify)
+
+
+
+
+# Contribution
+
+**Live app link: [On render](https://taskmate-x765.onrender.com)**
+
+These are some of the suggested contributions to **TaskMate**:
+
+- Refactor code to use the concept of separation of concerns (each functionality resides as a stand-alond module)
+  - Config module
+  - DB Schema
+  - Email
+  - Application instance
+  - Forms (using bootstrap to quicky generate and style them)
+  - Migrations (all changes to db schema available for review)
+- Modify the design of the database to support any engine
+  - The default is SQLite (it is small, quick to setup, does not require a server)
+  - If another is needed, then you can pass that as an environment variable in `.env`
+- Application instance:
+  - Refactored the factory function `create_app()` to not only initialize the extention variables but also to log errors (1. On file and 2. Send log data to admin via email)
+- To ensure the emailing feature works all the time, locally and on a prod app, I have used Twilio Sendgrid (You will have to create your own accounts with Twilio and Sengrid. It is free.)
+- All static resources are put in individual files as seen in the static folder
+- Base template modified to truly make it a base that child templates find reusable elements only.
+
+
+## UI Updates are as seen below:
+
+### Landing page
+![Landing page](/app/static/img/landing_page.png)
+
+### Login
+
+| Login page | Login page with password validation   |
+|-------------------- | ------------------------ |
+| ![Login page](/app/static/img/login_page.png) |  ![Login page password validation](/app/static/img/password_validation.png)  |
+
+
+
+- With links to register page, request password reset page and reset password page
+
+### Home Page
+
+| Home page (without task) | Home page with task   |
+|-------------------- | ------------------------ |
+| ![Home page without task](/app/static/img/home_page_without_task.png) | ![Home page](/app/static/img/home_page_updated_with_task.png) |
+
+
+### Create Task Page
+
+| Create tasks (home page) | Create tasks (standalone page)   |
+|-------------------- | ------------------------ |
+| ![Home page](/app/static/img/create_task_home_page_updated_with_file_upload.png) |  ![Home create task page](/app/static/img/home_create_task_standalone_page_updated_with_file_upload.png)  |
+
+
+### Task Details
+
+| View task | Edit task   |
+|-------------------- | ------------------------ |
+| ![View task page](/app/static/img/view_task_page_updated_with_file_upload.png) |  ![Edit task page](/app/static/img/edit_task_updated_with_file_upload.png) |
+
+
+### Comment on Task
+
+| Add comment to task | View task with comment   |
+|-------------------- | ------------------------ |
+| ![Add comment to task](/app/static/img/comment_on_task_updated_with_file_upload.png) |  ![View tas with comment](/app/static/img/view_task_with_comment.png)  |
+
+
+### Account Verification
+
+| Register page | Verify Email Address   | Email Token | Thank you note |
+|-------------- | ---------------------- |  ----------- | ------------- |
+| ![Register page](/app/static/img/register_page.png) |  ![Verify email address](/app/static/img/verify_email_address.png)  | ![Email Token](/app/static/img/email_token.png)  | ![Thank you note](/app/static/img/thank_you_note.png)  |
+
+### Email Reminders
+
+With the **threaded** email functionality in place, email reminders can be sent to a user to remind them of overdue tasks. The best approach to this would be to use cronjobs, a built-in utility in Linux. What will happen when this feature is completed is that at set intervals, say daily, an email reminder will be sent to each user in the database reminding them of ALL their overdue tasks.
+
+To make it possible, I have added the following:
+- Email template (see `overdue_task_email_notification` in [email module](/app/email.py))
+- Task reminder (see `send_overdue_task_reminder` in [task reminder module](/app/task_reminders.py))
+- Custom CLI commands (see `register` in [CLI module](/app/cli.py))
+- Register the custom CLI commands in [main module](main.py)
+- To implement cronjobs in Flask, check out [this tutorial](https://www.gitauharrison.com/articles/cronjobs-in-flask#scheduling).
+
+Unfortunately, the live app on render does not have the cronjob utility feature setup (it is a paid service which is not necessary in the scope of this application).
+
+## Testing Locally
+
+- Clone this repo:
+
+  ```python
+  $ git clone git@github.com:GitauHarrison/taskmate.git
+  ```
+
+- Change folder to the cloned directory:
+
+  ```python
+  $ cd taskmate
+  ```
+
+- Activate virtual environment:
+
+  ```python
+  # Default way
+  $ python3 -m venv venv
+  $ source venv/bin/activate
+
+  # Using virtualenvwrapper
+  $ mkvirtualenv venv
+  ```
+
+- Install dependances needed:
+
+  ```python
+  (venv)$ pip3 install -r requirements.txt
+  ```
+
+- Add needed environment variables:
+
+  ```python
+  (venv) cp .env-template .env # Add values to the .env file
+  ```
+
+- Start flask server:
+
+  ```python
+  (venv)$ flask run
+  ```
+
+- Copy and paste localhost link in your favourite browser

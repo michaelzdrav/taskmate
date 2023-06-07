@@ -1,0 +1,15 @@
+<p>Dear {{ user.username }},</p>
+<p>
+    You have a task that is overdue: <br><br>
+    <ul>
+        <li><strong>Title</strong>: {{ task.title }}</li>
+        <li><strong>Body</strong>: {{ task.body }}</li>
+        <li><strong>Due Date</strong>: <span style="color: red;">{{ task.due_date }}</span></li>
+    </ul>
+</p>
+<p>
+    You can review this task and take action by clicking 
+    <a href="{{ url_for('user.home', _external=True) }}">here</a>.
+</p>
+<p>Sincerely,</p>
+<p>The TaskMate Team.</p>

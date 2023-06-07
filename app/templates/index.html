@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block anonymous_content %}
+   <div class="row mt-2 mb-2 text-center">
+      <div class="col-md-12">
+         <h1>{{ title }}</h1>
+         <p class="lead">Taskmate is a free task management tool that helps you stay organised and on top of your work.
+            Taskmate, you can create tasks, set deadlines, track progress and receive email notifications.</p>
+      </div>
+   </div>   
+   <div class="row content">
+      <div class="col-md-3"></div>
+      <div class="col-md-6">
+         <h2 class="mt-5 text-center">Key Features</h2>
+         <ol >
+            <li>Create tasks with deadlines, descriptions and comments.</li>
+            <li>Move tasks between Active and Done status.</li>
+            <li>Receive email reminders regarding your overdue tasks!</li>
+            <li>You can host this yourself (Source Code link at the top).</li>
+         </ol>
+      </div>
+      <div class="col-md-3"></div>
+   </div>
+   <div class="row text-center content">
+      <div class="col-md-12">
+         <p class="mt-5">Your first step to getting started is the login page. Here it is so you can get accustomed to it.</p>
+         <img src="{{ url_for('static', filename='img/login_page.png') }}" class="img img-fluid mt-5 mx-auto" alt="Login" style="width: 100%; height: auto;">
+         <p class="mt-5">Your next step is to create a task. Put as much detail as it needs!</p>
+         <img src="{{ url_for('static', filename='img/home_create_task_standalone_page_updated_with_file_upload.png') }}" class="img img-fluid mt-5 mx-auto" alt="Login" style="width: 100%; height: auto;">
+         <p class="mt-5">The Task Details is where you will see all your tasks.</p>
+         <img src="{{ url_for('static', filename='img/home_page_updated_with_task.png') }}" class="img img-fluid mt-5 mx-auto" alt="Login" style="width: 100%; height: auto;">
+         <p class="mt-5">Want to see what each task is? Click on each task's title.</p>
+         <img src="{{ url_for('static', filename='img/view_task_page_updated_with_file_upload.png') }}" class="img img-fluid mt-5 mx-auto" alt="Login" style="width: 100%; height: auto;">
+         <p class="mt-5">You can edit each task.</p>
+         <img src="{{ url_for('static', filename='img/edit_task_updated_with_file_upload.png') }}" class="img img-fluid mt-5 mx-auto" alt="Login" style="width: 100%; height: auto;">
+         <p class="mt-5">Provide more information to each task by writing comments!</p>
+         <img src="{{ url_for('static', filename='img/comment_on_task_updated_with_file_upload.png') }}" class="img img-fluid mt-5 mx-auto" alt="Login" style="width: 100%; height: auto;">
+         <h2 class="mt-5">Contact Me</h2>
+         <p class="mt-3">Feel free to report any bugs in Github Issues, or reach out via LinkedIn.</p>         
+      </div>
+   </div>
+   <hr>
+   <footer class="text-center">
+      &copy; {{ moment().format('YYYY') }} Copyright - TaskMate
+   </footer>
+{% endblock %}

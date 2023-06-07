@@ -1,0 +1,31 @@
+.content {
+    padding: 20px;
+    font-size: 15px;
+}
+.content p {
+    line-height: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.content img {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+footer{ 
+    min-height:50px; 
+}
+.card {
+    border: 1px solid #d7d7d7;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+}
+.my-forms {
+    border: 1px solid #d7d7d7;
+    padding: 10px;
+    border-radius: 10px;
+}
+.img_auth_user {
+    box-shadow: #0000003d 0px 3px 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
