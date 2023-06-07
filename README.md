@@ -224,3 +224,48 @@ To make it possible, I have added the following:
 - To implement cronjobs in Flask, check out [this tutorial](https://www.gitauharrison.com/articles/cronjobs-in-flask#scheduling).
 
 Unfortunately, the live app on render does not have the cronjob utility feature setup (it is a paid service which is not necessary in the scope of this application).
+
+## Testing Locally
+
+- Clone this repo:
+
+  ```python
+  $ git clone git@github.com:GitauHarrison/taskmate.git
+  ```
+
+- Change folder to the cloned directory:
+
+  ```python
+  $ cd taskmate
+  ```
+
+- Activate virtual environment:
+
+  ```python
+  # Default way
+  $ python3 -m venv venv
+  $ source venv/bin/activate
+
+  # Using virtualenvwrapper
+  $ mkvirtualenv venv
+  ```
+
+- Install dependances needed:
+
+  ```python
+  (venv)$ pip3 install -r requirements.txt
+  ```
+
+- Add needed environment variables:
+
+  ```python
+  (venv) cp .env-template .env # Add values to the .env file
+  ```
+
+- Start flask server:
+
+  ```python
+  (venv)$ flask run
+  ```
+
+- Copy and paste localhost link in your favourite browser
