@@ -124,18 +124,18 @@ Order depends on what I feel like working on when I have the free time 😃
 - ~~Input validation, text length limits for title, description, comments~~
 - Add settings page, configure timezones, store tasks in local timezones 
 - ~~Add get_task before anything that uses the existing task to check it exists~~
-- File uploads for each task
+- ~~File uploads for each task~~
 - Add caching for performance
 - ~~Switch to flask-sqlalchemy to support more db engines https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-iv-database~~
 - Introduce background tasks with celery (for emails etc) to reduce waiting times 
   - https://flask.palletsprojects.com/en/2.3.x/patterns/celery/
-  - ~~I have used a thread instead of celery~~
+    - ~~I have used a thread instead of celery~~
 - Improve security
   - Flask-talisman
   - Flask-paranoid
   - ~~Password Reset~~
   - ~~Password complexity~~
-  - Account verification
+  - ~~Account verification~~ (using Twilio Verify)
 
 
 
@@ -202,3 +202,10 @@ These are some of the suggested contributions to **TaskMate**:
 | Add comment to task | View task with comment   |
 |-------------------- | ------------------------ |
 | ![Add comment to task](/app/static/img/comment_on_task_updated_with_file_upload.png) |  ![View tas with comment](/app/static/img/view_task_with_comment.png)  |
+
+
+### Account Verification
+
+| Register page | Verify Email Address   | Email Token | Thank you note |
+|-------------- | ---------------------- |  ----------- | ------------- |
+| ![Register page](/app/static/img/register_page.png) |  ![Verify email address](/app/static/img/verify_email_address.png)  | ![Email Token](/app/static/img/email_token.png)  | ![Thank you note](/app/static/img/thank_you_note.png)  |

@@ -13,6 +13,10 @@ from app.twilio_verify_api import check_email_verification_token,request_email_v
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+def encrypt_password(password):
+    from werkzeug.security import generate_password_hash
+    password = generate_password_hash(password)
+    return password
 
 @app.route('/')
 @app.route('/index')
@@ -62,10 +66,12 @@ def register():
         return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
+        request_email_verification_token(form.email.data)
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
-        session['user'] = user
-        request_email_verification_token(user.email)
+        session['username'] = form.username.data
+        session['email'] = form.email.data
+        session['password'] = encrypt_password(form.password.data)
         flash('A token has been sent to your email address. '
               'Enter it below to confirm you have access to your email address.')
         return redirect(url_for('verify_email_token'))
@@ -83,19 +89,29 @@ def verify_email_token():
     """
     form = VerifyForm()
     if form.validate_on_submit():
-        user = session['user']
+        try:
+            username = session['username']
+            email = session['email']
+            password = session['password']
 
-        if check_email_verification_token(user.email, form.token.data):
-            db.session.add(user)
-            db.session.commit()
-            del session['user']
+            if check_email_verification_token(email, form.token.data):
+                user = User(username=username, email=email)
+                user.set_password(password)
+                db.session.add(user)
+                db.session.commit()
+                del session['username']
+                del session['email']
+                del session['password']
 
-            # Send user a thank you email
-            thank_you_user(user)
+                # Send user a thank you email
+                thank_you_user(username, email)
 
-            flash('Registered successfully. Please check you inbox.')
-            return redirect(url_for('login'))
-        form.token.errors.append('Invalid token.')
+                flash('Registered successfully. Please check you inbox and login to continue.')
+                return redirect(url_for('login'))
+            form.token.errors.append('Invalid token.')
+        except KeyError as e:
+            flash('Try registering again.')
+            return redirect(url_for('register'))
     return render_template(
         'auth/verify_email_token.html',
         title='Verify Your Email',

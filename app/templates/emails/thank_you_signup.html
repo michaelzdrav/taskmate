@@ -1,9 +1,9 @@
-<p>Dear {{ user.username }},</p>
+<p>Dear {{ username }},</p>
 <p>
     Thank you for signing up for TaskMate, your free task management tool. Login to continue 
     by clicking 
-    <a href="{{ url_for('login, _external=True') }}">here</a>
+    <a href="{{ url_for('login', _external=True) }}">here</a>
 </p>
-<p>Alternatively, check for the login button in the navigation bar of the app</p>
+<p>Alternatively, check for the login button in the navigation bar of the app.</p>
 <p>Sincerely,</p>
 <p>Taskmate Team</p>

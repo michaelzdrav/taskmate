@@ -43,13 +43,13 @@ def overdue_task_email_notification(user, task):
 
 # Thank you for registration
 
-def thank_you_user(user):
+def thank_you_user(username, email):
     """Email sent to user"""
     send_email(
         "[Taskmate] Thank you for your registration.",
         sender=app.config['MAIL_DEFAULT_SENDER'],
-        recipients=[user.email],
+        recipients=[email],
         text_body=render_template(
-            "emails/thank_you_signup.txt", user=user),
+            "emails/thank_you_signup.txt", username=username),
         html_body=render_template(
-            "emails/thank_you_signup.html", user=user))
+            "emails/thank_you_signup.html", username=username))
