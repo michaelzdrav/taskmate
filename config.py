@@ -30,3 +30,6 @@ class Config(object):
 
     # File upload
     UPLOAD_PATH = os.environ.get('UPLOAD_PATH') or 'static/img/uploads'
+
+    # Live app logging
+    LOG_TO_STDOUT = os.environ.get('LOG_TO_STDOUT')
