@@ -209,3 +209,16 @@ These are some of the suggested contributions to **TaskMate**:
 | Register page | Verify Email Address   | Email Token | Thank you note |
 |-------------- | ---------------------- |  ----------- | ------------- |
 | ![Register page](/app/static/img/register_page.png) |  ![Verify email address](/app/static/img/verify_email_address.png)  | ![Email Token](/app/static/img/email_token.png)  | ![Thank you note](/app/static/img/thank_you_note.png)  |
+
+### Email Reminders
+
+With the **threaded** email functionality in place, email reminders can be sent to a user to remind them of overdue tasks. The best approach to this would be to use cronjobs, a built-in utility in Linux. What will happen when this feature is completed is that at set intervals, say daily, an email reminder will be sent to each user in the database reminding them of ALL their overdue tasks.
+
+To make it possible, I have added the following:
+- Email template (see `overdue_task_email_notification` in [email module](/app/email.py))
+- Task reminder (see 'send_overdue_task_reminder` in [task reminder module](/app/task_reminders.py))
+- Custom CLI commands (see 'register` in [CLI module](/app/cli.py))
+- Register the custom CLI commands in [main module](main.py)
+- To implement cronjobs in Flask, check out [this tutorial](https://www.gitauharrison.com/articles/cronjobs-in-flask#scheduling).
+
+Unfortunately, the live app on render does not have the cronjob utility feature setup (it is a paid service which is not necessary in the scope of this application).
