@@ -142,6 +142,8 @@ Order depends on what I feel like working on when I have the free time 😃
 
 # Contribution
 
+**Live app link: [On render](https://taskmate-x765.onrender.com)**
+
 These are some of the suggested contributions to **TaskMate**:
 
 - Refactor code to use the concept of separation of concerns (each functionality resides as a stand-alond module)
@@ -216,8 +218,8 @@ With the **threaded** email functionality in place, email reminders can be sent 
 
 To make it possible, I have added the following:
 - Email template (see `overdue_task_email_notification` in [email module](/app/email.py))
-- Task reminder (see 'send_overdue_task_reminder` in [task reminder module](/app/task_reminders.py))
-- Custom CLI commands (see 'register` in [CLI module](/app/cli.py))
+- Task reminder (see `send_overdue_task_reminder` in [task reminder module](/app/task_reminders.py))
+- Custom CLI commands (see `register` in [CLI module](/app/cli.py))
 - Register the custom CLI commands in [main module](main.py)
 - To implement cronjobs in Flask, check out [this tutorial](https://www.gitauharrison.com/articles/cronjobs-in-flask#scheduling).
 
