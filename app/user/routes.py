@@ -1,172 +1,21 @@
-from app import app, db
-from flask import render_template, url_for, redirect, request, flash, session
-from flask_login import current_user, login_user, logout_user, login_required
-from app.forms import LoginForm, RegistrationForm, RequestPasswordResetForm, \
-    ResetPasswordForm, CreateTaskForm, TaskCommentForm,VerifyForm
-from app.models import User, Task, TaskComment
-from werkzeug.urls import url_parse
-from app.email import send_password_reset_email, thank_you_user
-from datetime import datetime, date
+from app import db
+from flask import render_template, url_for, redirect, request, flash, current_app
+from flask_login import current_user, login_required
+from app.user.forms import CreateTaskForm, TaskCommentForm
+from app.models import Task, TaskComment
+from datetime import date
 from werkzeug.utils import secure_filename
 import os
-from app.twilio_verify_api import check_email_verification_token,request_email_verification_token
+from app.user import bp
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-
-def encrypt_password(password):
-    from werkzeug.security import generate_password_hash
-    password = generate_password_hash(password)
-    return password
-
-@app.route('/')
-@app.route('/index')
-def index():
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
-    return render_template(
-        'index.html',
-        title='Welcome To TaskMate!')
-
-# ==========================================
-# AUTHENTICATION
-# ==========================================
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password.')
-            return redirect(url_for('login'))
-        login_user(user, remember=form.remember_me.data)
-        next_page = request.args.get('next')
-        if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('home')
-        flash(f'Welcome {user.username}.')
-        return redirect(next_page)
-    return render_template(
-        'auth/login.html',
-        title='Login',
-        form=form)
-
-
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('login'))
-
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        request_email_verification_token(form.email.data)
-        user = User(username=form.username.data, email=form.email.data)
-        user.set_password(form.password.data)
-        session['username'] = form.username.data
-        session['email'] = form.email.data
-        session['password'] = encrypt_password(form.password.data)
-        flash('A token has been sent to your email address. '
-              'Enter it below to confirm you have access to your email address.')
-        return redirect(url_for('verify_email_token'))
-    return render_template(
-        'auth/register.html',
-        title='Register',
-        form=form)
-
-
-@app.route('/verify-email-token', methods=['GET', 'POST'])
-def verify_email_token():
-    """
-    User verifies their email address by 
-    providing token sent to their inbox
-    """
-    form = VerifyForm()
-    if form.validate_on_submit():
-        try:
-            username = session['username']
-            email = session['email']
-            password = session['password']
-
-            if check_email_verification_token(email, form.token.data):
-                user = User(username=username, email=email)
-                user.password_hash = password
-                db.session.add(user)
-                db.session.commit()
-                del session['username']
-                del session['email']
-                del session['password']
-
-                # Send user a thank you email
-                thank_you_user(username, email)
-
-                flash('Registered successfully. Please check you inbox and login to continue.')
-                return redirect(url_for('login'))
-            form.token.errors.append('Invalid token.')
-        except KeyError as e:
-            flash('Try registering again.')
-            return redirect(url_for('register'))
-    return render_template(
-        'auth/verify_email_token.html',
-        title='Verify Your Email',
-        form=form)
-
-
-@app.route('/request-password-reset', methods=['GET', 'POST'])
-def request_password_reset():
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
-    form = RequestPasswordResetForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user:
-            # Send user an email
-            send_password_reset_email(user)
-        # Conceal database information by giving general information
-        flash("Check your email for the instructions to reset your password")
-        return redirect(url_for("login"))
-    return render_template(
-        'auth/request_password_reset.html',
-        title='Request Password Reset',
-        form=form)
-
-
-@app.route('/reset-password/<token>', methods=['GET', 'POST'])
-def reset_password(token):
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
-    # Verify request token
-    user = User.verify_reset_password_token(token)
-    if not user:
-        return redirect(url_for('login'))
-    form = ResetPasswordForm()
-    # If verified, proceed to allow for password reset
-    if form.validate_on_submit():
-        user.set_password(form.password.data)
-        db.session.commit()
-        flash("Your password has been reset. Log in to continue")
-        return redirect(url_for('login'))
-    return render_template(
-        'auth/reset_password.html',
-        title='Reset Password',
-        form=form)
-
-# ==========================================
-# END OF AUTHENTICATION
-# ==========================================
 
 
 # ==========================================
 # AUTHENTICATED USER
 # ==========================================
 
-@app.route('/home', methods=['GET', 'POST'])
+@bp.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
     form = CreateTaskForm()
@@ -186,7 +35,7 @@ def home():
             if not os.path.exists('app/static/img/uploads'):
                 os.mkdir('app/static/img/uploads')
             file_path = os.path.join(
-                basedir, app.config['UPLOAD_PATH'], task.title + '_' + filename)
+                basedir, current_app.config['UPLOAD_PATH'], task.title + '_' + filename)
             uploaded_file.save(file_path)
             file_path_list = file_path.split('/')
             if 'static' in file_path_list:
@@ -198,7 +47,7 @@ def home():
         db.session.add(task)
         db.session.commit()
         flash('Task created.')
-        return redirect(url_for('home'))
+        return redirect(url_for('user.home'))
 
     # Get all tasks
     tasks = current_user.tasks.order_by(Task.timestamp.desc()).all()
@@ -236,7 +85,7 @@ def home():
         num_completed_tasks=num_completed_tasks)
 
 
-@app.route('/create-task', methods=['GET', 'POST'])
+@bp.route('/create-task', methods=['GET', 'POST'])
 @login_required
 def create_task():
     form = CreateTaskForm()
@@ -254,7 +103,7 @@ def create_task():
             if not os.path.exists('app/static/img/uploads'):
                 os.mkdir('app/static/img/uploads')
             file_path = os.path.join(
-                basedir, app.config['UPLOAD_PATH'], task.title + '_' + filename)
+                basedir, current_app.config['UPLOAD_PATH'], task.title + '_' + filename)
             uploaded_file.save(file_path)
             file_path_list = file_path.split('/')
             if 'static' in file_path_list:
@@ -266,7 +115,7 @@ def create_task():
         db.session.add(task)
         db.session.commit()
         flash('Task added.')
-        return redirect(url_for('home'))
+        return redirect(url_for('user.home'))
     # Get all tasks
     tasks = current_user.tasks.order_by(Task.timestamp.desc()).all()
     # Loop through all the tasks
@@ -292,7 +141,7 @@ def create_task():
         form=form)
 
 
-@app.route('/task-details/<title>', methods=['GET', 'POST'])
+@bp.route('/task-details/<title>', methods=['GET', 'POST'])
 @login_required
 def task_details(title):
     task = Task.query.filter_by(title=title).first()
@@ -313,7 +162,7 @@ def task_details(title):
             if not os.path.exists('app/static/img/uploads'):
                 os.mkdir('app/static/img/uploads')
             file_path = os.path.join(
-                basedir, app.config['UPLOAD_PATH'], task.title + '_' + filename)
+                basedir, current_app.config['UPLOAD_PATH'], task.title + '_' + filename)
             uploaded_file.save(file_path)
             file_path_list = file_path.split('/')
             if 'static' in file_path_list:
@@ -323,14 +172,14 @@ def task_details(title):
 
         db.session.commit()
         flash('Edits saved.')
-        return redirect(url_for('task_details', title=task.title))
+        return redirect(url_for('user.task_details', title=task.title))
     # Add a comment to a task
     if comment_form.submit_comment.data and comment_form.validate():
         task_comment = TaskComment(body=comment_form.body.data, task_id=task.id)
         db.session.add(task_comment)
         db.session.commit()
         flash(f'Comment to the task {task.title} saved.')
-        return redirect(url_for('task_details', title=task.title))
+        return redirect(url_for('user.task_details', title=task.title))
     if request.method == 'GET':
         form.title.data = task.title
         form.body.data = task.body
@@ -345,24 +194,24 @@ def task_details(title):
         user_task_comments=user_task_comments)
 
 
-@app.route('/complete-task/<title>', methods=['GET', 'POST'])
+@bp.route('/complete-task/<title>', methods=['GET', 'POST'])
 @login_required
 def complete_task(title):
     task = Task.query.filter_by(title=title).first()
     task.status='Completed'
     db.session.commit()
     flash(f'The task {task.title} completed.')
-    return redirect(url_for('home'))
+    return redirect(url_for('user.home'))
 
 
-@app.route('/delete-task/<title>', methods=['GET', 'POST'])
+@bp.route('/delete-task/<title>', methods=['GET', 'POST'])
 @login_required
 def delete_task(title):
     task = Task.query.filter_by(title=title).first()
     db.session.delete(task)
     db.session.commit()
     flash(f'The task {task.title} deleted.')
-    return redirect(url_for('home'))
+    return redirect(url_for('user.home'))
 
 
 # ==========================================

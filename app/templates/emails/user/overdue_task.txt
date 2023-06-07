@@ -8,7 +8,7 @@ Due Date: {{ task.due_date }}
 
 You can review this task and take action by clicking on this link:
 
-{{ url_for('home', _external=True) }}
+{{ url_for('user.home', _external=True) }}
 
 Sincerely,
 The TaskMate Team.

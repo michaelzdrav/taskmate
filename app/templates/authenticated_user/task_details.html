@@ -41,8 +41,8 @@
         <button type="button" class="btn btn-info" data-toggle="modal" data-target="#commentModal">
           Add Comment
         </button>
-        <a class="btn btn-warning" href="{{ url_for('complete_task', title=task.title) }}">Complete</a>
-        <a class="btn btn-danger" href="{{ url_for('delete_task', title=task.title) }}">Delete</a>
+        <a class="btn btn-warning" href="{{ url_for('user.complete_task', title=task.title) }}">Complete</a>
+        <a class="btn btn-danger" href="{{ url_for('user.delete_task', title=task.title) }}">Delete</a>
 
         <!-- Edit Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

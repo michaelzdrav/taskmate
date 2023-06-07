@@ -1,5 +1,5 @@
 from app.models import Task, User
-from app.email import overdue_task_email_notification
+from app.user.email import overdue_task_email_notification
 
 
 def send_overdue_task_reminder():

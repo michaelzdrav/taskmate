@@ -1,4 +1,4 @@
-from app import app
+from flask import current_app
 from twilio.rest import Client
 
 
@@ -7,9 +7,9 @@ def _get_twilio_verify_client():
     Get the Twilio Verify API client
     """
     return Client(
-        app.config['TWILIO_ACCOUNT_SID'],
-        app.config['TWILIO_AUTH_TOKEN']
-    ).verify.services(app.config['TWILIO_VERIFY_SERVICE_ID'])
+        current_app.config['TWILIO_ACCOUNT_SID'],
+        current_app.config['TWILIO_AUTH_TOKEN']
+    ).verify.services(current_app.config['TWILIO_VERIFY_SERVICE_ID'])
 
 
 def request_email_verification_token(email):
