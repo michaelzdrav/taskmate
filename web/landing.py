@@ -38,9 +38,16 @@ from flask import current_app
 
 def mobile_check():
     user_agent_string = request.headers.get("User-Agent")
-    current_app.logger.info("IP: %s. User-Agent: %s", request.remote_addr, user_agent_string)
+
     if "Mobile" in user_agent_string or "iPhone" in user_agent_string:
         return True
+
+
+@bp.route("/error", methods=("GET",))
+def error():
+    return render_template(
+        "error.html",
+    )
 
 
 @bp.route("/", methods=("GET",))
@@ -62,7 +69,7 @@ def index(id=None):
                         overdue=overdue,
                         comments=comments,
                         view=latest_task,
-                        status="Active"
+                        status="Active",
                     )
 
                 return render_template(
@@ -74,7 +81,6 @@ def index(id=None):
                 )
             else:
                 if mobile_check():
-
                     return render_template(
                         "mobile/index.html",
                         tasks=tasks,
@@ -99,36 +105,37 @@ def index(id=None):
         return render_template("landing/index.html")
 
 
-@bp.route("/<int:id>/view", methods=("POST",))
-def load_view(id):
-    if id is not None and mobile_check():
-        return redirect(url_for("landing.task_view", id=id,status="Active"))
-
-    return index(id)
-
-@bp.route("/<int:id>/doneview", methods=("POST",))
-def load_doneview(id):
-    if id is not None and mobile_check():
-        return redirect(url_for("landing.task_view", id=id,status="Done"))
-
-    return done(id)
-
 @bp.route("/mobile/<int:id>")
 def task_view(id):
     if g.user and g.user.id:
         if id is not None:
             view_task = get_task(id)
             comments = get_comments_for_task(id)
-            status = request.args.get("status") 
+            status = request.args.get("status")
 
             return render_template(
-                "mobile/task.html",
-                view=view_task,
-                comments=comments,
-                status=status
+                "mobile/task.html", view=view_task, comments=comments, status=status
             )
 
-    return render_template("mobile/index.html", )
+    return render_template(
+        "mobile/index.html",
+    )
+
+
+@bp.route("/<int:id>/view", methods=("POST",))
+def load_view(id):
+    if id is not None and mobile_check():
+        return redirect(url_for("landing.task_view", id=id, status="Active"))
+
+    return index(id)
+
+
+@bp.route("/<int:id>/doneview", methods=("POST",))
+def load_doneview(id):
+    if id is not None and mobile_check():
+        return redirect(url_for("landing.task_view", id=id, status="Done"))
+
+    return done(id)
 
 
 @bp.route("/create", methods=("GET", "POST"))
@@ -140,6 +147,7 @@ def create():
         body = request.form["body"]
         error = None
         status = "ACTIVE"
+        tenant_id = g.get("tenant_id")
 
         if due_date:
             try:
@@ -160,7 +168,8 @@ def create():
                 current_app.logger.info(
                     "Inserting task [author_id] %s, [title] %s.", g.user.id, title
                 )
-                task = Task(author_id=g.user.id, title=title)
+
+                task = Task(author_id=g.user.id, title=title, tenant_id=tenant_id)
                 db.session.add(task)
                 db.session.commit()
 
@@ -174,7 +183,9 @@ def create():
                     title,
                     body,
                 )
-                task = Task(author_id=g.user.id, title=title)
+                task = Task(
+                    author_id=g.user.id, title=title, body=body, tenant_id=tenant_id
+                )
                 db.session.add(task)
                 db.session.commit()
 
@@ -191,7 +202,11 @@ def create():
                 )
 
                 task = Task(
-                    author_id=g.user.id, due_date=due_date, title=title, status=status
+                    author_id=g.user.id,
+                    due_date=due_date,
+                    title=title,
+                    status=status,
+                    tenant_id=tenant_id,
                 )
                 db.session.add(task)
                 db.session.commit()
@@ -214,6 +229,7 @@ def create():
                 title=title,
                 body=body,
                 status=status,
+                tenant_id=tenant_id,
             )
             db.session.add(task)
             db.session.commit()
@@ -233,6 +249,7 @@ def done(id=None):
                     Task.author_id == User.id,
                     Task.author_id == g.user.id,
                     Task.status == "DONE",
+                    Task.tenant_id == g.get("tenant_id"),
                 )
                 .order_by(Task.created.desc())
                 .all()
@@ -241,7 +258,13 @@ def done(id=None):
             comments = (
                 TaskComment.query.join(Task)
                 .join(User)
-                .filter(Task.author_id == g.user.id, Task.status == "DONE")
+                .filter(
+                    Task.author_id == g.user.id,
+                    Task.status == "DONE",
+                    Task.tenant_id == g.get("tenant_id"),
+                    User.tenant_id == g.get("tenant_id"),
+                    TaskComment.tenant_id == g.get("tenant_id"),
+                )
                 .order_by(TaskComment.task_id.asc())
                 .with_entities(
                     TaskComment.id,
@@ -261,7 +284,7 @@ def done(id=None):
                         tasks=tasks,
                         comments=comments,
                         view=latest_task,
-                        status="Done"
+                        status="Done",
                     )
 
                 return render_template(
@@ -279,7 +302,7 @@ def done(id=None):
                     tasks=tasks,
                     comments=comments,
                     view=latest,
-                    status="Done"
+                    status="Done",
                 )
 
             return render_template(
@@ -298,13 +321,14 @@ def add_comment(id):
     current_app.logger.info("Task [id] %s, adding [comment] %s", id, comment)
     task = get_task(id)
     error = None
+    tenant_id = g.get("tenant_id")
 
     if not comment:
         error = "Comment is required."
     if error is not None:
         flash(error)
 
-    task_comment = TaskComment(task_id=id, content=comment)
+    task_comment = TaskComment(task_id=id, content=comment, tenant_id=tenant_id)
     db.session.add(task_comment)
     db.session.commit()
 
@@ -320,8 +344,6 @@ def add_comment(id):
 def delete_comment(id, task):
     current_app.logger.info("Deleting comment [id] %s", id)
     error = None
-    print("id is: ", id)
-    print("taskid is: ", task)
     if not Task.query.get(task):
         error = "Cannot delete comment as task does not exist."
     if not TaskComment.query.get(id):
@@ -371,6 +393,7 @@ def update_task(id):
         )
         error = None
         status = "ACTIVE"
+        tenant_id = g.get("tenant_id")
 
         if not get_task(id):
             error = "Task does not exist."
@@ -381,6 +404,9 @@ def update_task(id):
             error = "Title is required."
         else:
             task.title = title
+
+        if task.tenant_id != tenant_id:
+            error = "Cannot update task, Tenant_ID mismatch to task."
 
         if body:
             task.body = body
@@ -427,6 +453,15 @@ def update_task(id):
 @login_required
 def delete(id):
     task = get_task(id)
+    tenant_id = g.get("tenant_id")
+    error = None
+    if task.tenant_id != tenant_id:
+        error = "Cannot delete task, tenant_id mismatch."
+
+    if error is not None:
+        flash(error)
+        return redirect(url_for("landing.index"))
+
     if task.status == "ACTIVE" or task.status == "OVERDUE":
         # if task["status"] == "ACTIVE" or task["status"] == "OVERDUE":
         current_app.logger.info("Deleting task [id] %s.", id)

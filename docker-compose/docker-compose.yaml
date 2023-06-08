@@ -15,3 +15,5 @@ services:
       - MAIL_PASSWORD=<password>
       - SMTP_ENABLED=True
       - SQLALCHEMY_DATABASE_URI=postgresql://username:password@host:port/db_name
+      - DATABASE_HOST=host
+      - DATABASE_PORT=port

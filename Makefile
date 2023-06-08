@@ -11,13 +11,16 @@ env:
 		echo "MAIL_USERNAME=admin" >> .env; \
 		echo "MAIL_PASSWORD=password" >> .env; \
 		echo "SMTP_ENABLED=False" >> .env; \
+		echo "SQLALCHEMY_DATABASE_URI=postgresql://username:password@host:port/taskmate"; \
+		echo "DATABASE_HOST=postgresql"; \
+		echo "DATABASE_PORT=5432"; \
 		echo "Created .env"; \
 	fi
 
 build: freeze
 	docker build -t taskmate:latest .
 
-docker-dev: 
+docker-dev:
 	docker-compose -f ./docker-compose/docker-compose-dev.yaml down
 	docker-compose -f ./docker-compose/docker-compose-dev.yaml up -d
 
@@ -50,8 +53,8 @@ run:
 	gunicorn 'web:create_app()'
 
 db:
-	rm instance/web.sqlite; \
-	flask --app web init-db;
+	flask --app web db migrate; \
+	flask --app web db upgrade;
 
 db-view:
 	sqlite3 instance/web.sqlite;

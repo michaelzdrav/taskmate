@@ -5,22 +5,6 @@ services:
     ports:
       - '1080:1080'  
       - '1025:1025'
-
-  taskmate:
-    image: mz1234/taskmate:11
-    ports:
-      - '80:5001'
-    volumes:
-      - ../instance:/run/instance
-    environment:
-      - SECRET_KEY=test
-      - MAIL_SERVER=mailcatcher
-      - MAIL_PORT=1025
-      - MAIL_USE_TLS=1
-      - SMTP_ENABLED=True
-      - SQLALCHEMY_DATABASE_URI=postgresql://admin:password@postgresql:5432/taskmate
-    depends_on:
-      - mailcatcher
   postgresql:
     image: postgres
     container_name: basic-postgresql
@@ -32,3 +16,21 @@ services:
       - 5432:5432
     volumes:
       - /tmp/postgresql:/var/lib/postgresql/data
+  taskmate:
+    image: taskmate
+    ports:
+      - '80:5001'
+    volumes:
+      - ../instance:/run/instance
+    environment:
+      - SECRET_KEY=test
+      - MAIL_SERVER=mailcatcher
+      - MAIL_PORT=1025
+      - MAIL_USE_TLS=1
+      - SMTP_ENABLED=True
+      - SQLALCHEMY_DATABASE_URI=postgresql://admin:password@postgresql:5432/taskmate
+      - DATABASE_HOST=postgresql
+      - DATABASE_PORT=5432
+    depends_on:
+      - postgresql
+      - mailcatcher

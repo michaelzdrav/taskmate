@@ -7,7 +7,7 @@ from .models import User, Task, TaskComment
 def get_active_tasks(user_id):
     current_app.logger.debug("Querying database for active tasks.")
 
-    return (
+    query = (
         Task.query.with_entities(
             Task.id,
             User.username,
@@ -17,12 +17,18 @@ def get_active_tasks(user_id):
             Task.title,
             Task.body,
             Task.status,
+            Task.tenant_id,
         )
         .join(User, Task.author_id == User.id)
-        .filter(Task.author_id == user_id, Task.status != "DONE")
+        .filter(
+            Task.author_id == user_id,
+            Task.status != "DONE",
+            User.tenant_id == g.get("tenant_id"),
+            Task.tenant_id == g.get("tenant_id"),
+        )
         .order_by(Task.created.desc())
-        .all()
     )
+    return query.all()
 
 
 def get_latest_task(user_id):
@@ -38,9 +44,15 @@ def get_latest_task(user_id):
             Task.title,
             Task.body,
             Task.status,
+            Task.tenant_id,
         )
         .join(User, Task.author_id == User.id)
-        .filter(Task.author_id == user_id, Task.status != "DONE")
+        .filter(
+            Task.author_id == user_id,
+            Task.status != "DONE",
+            User.tenant_id == g.get("tenant_id"),
+            Task.tenant_id == g.get("tenant_id"),
+        )
         .order_by(Task.created.desc())
         .first()
     )
@@ -59,9 +71,15 @@ def get_done_tasks(user_id):
             Task.title,
             Task.body,
             Task.status,
+            Task.tenant_id,
         )
         .join(User, Task.author_id == User.id)
-        .filter(Task.author_id == user_id, Task.status == "DONE")
+        .filter(
+            Task.author_id == user_id,
+            Task.status == "DONE",
+            User.tenant_id == g.get("tenant_id"),
+            Task.tenant_id == g.get("tenant_id"),
+        )
         .order_by(Task.created.desc())
         .all()
     )
@@ -73,7 +91,12 @@ def get_overdue_tasks(user_id):
     return (
         Task.query.with_entities(Task.id, Task.status, Task.created)
         .join(User, Task.author_id == User.id)
-        .filter(Task.author_id == user_id, Task.status == "OVERDUE")
+        .filter(
+            Task.author_id == user_id,
+            Task.status == "OVERDUE",
+            User.tenant_id == g.get("tenant_id"),
+            Task.tenant_id == g.get("tenant_id"),
+        )
         .order_by(Task.created.desc())
         .all()
     )
@@ -82,20 +105,26 @@ def get_overdue_tasks(user_id):
 def get_comments_for_task(task_id):
     current_app.logger.debug("Querying database for comments for a single task.")
 
-    return(
+    return (
         db.session.query(
             TaskComment.id,
             TaskComment.task_id,
             TaskComment.content,
             TaskComment.created,
+            TaskComment.tenant_id,
             Task.author_id,
-        ).join(Task, TaskComment.task_id == Task.id).join(
-            User, Task.author_id == User.id
-        ).filter(
-            TaskComment.task_id == task_id
-        ).order_by(
-            TaskComment.task_id.asc()
-        ).all()
+            Task.tenant_id,
+        )
+        .join(Task, TaskComment.task_id == Task.id)
+        .join(User, Task.author_id == User.id)
+        .filter(
+            TaskComment.task_id == task_id,
+            User.tenant_id == g.get("tenant_id"),
+            TaskComment.tenant_id == g.get("tenant_id"),
+            Task.tenant_id == g.get("tenant_id"),
+        )
+        .order_by(TaskComment.task_id.asc())
+        .all()
     )
 
 
@@ -107,10 +136,16 @@ def get_comments(user_id):
             TaskComment.id,
             TaskComment.task_id,
             TaskComment.content,
-            TaskComment.created
+            TaskComment.created,
+            TaskComment.tenant_id,
         )
         .join(Task, TaskComment.task_id == Task.id)
-        .filter(Task.author_id == user_id, Task.status != "DONE")
+        .filter(
+            Task.author_id == user_id,
+            Task.status != "DONE",
+            Task.tenant_id == g.get("tenant_id"),
+            TaskComment.tenant_id == g.get("tenant_id"),
+        )
         .order_by(TaskComment.task_id.asc())
         .all()
     )
@@ -119,7 +154,8 @@ def get_comments(user_id):
 def delete_single_comment(id):
     current_app.logger.debug("Deleting comment id %s from db.", id)
 
-    task_comment = TaskComment.query.get(id)
+    task_comment = TaskComment.query.filter_by(id=id, tenant_id=g.get("tenant_id")).first()
+
     if task_comment:
         db.session.delete(task_comment)
         db.session.commit()
@@ -128,7 +164,7 @@ def delete_single_comment(id):
 def get_task(id, check_user=True):
     current_app.logger.debug("Querying database for task %s.", id)
 
-    task = Task.query.filter_by(id=id).first()
+    task = Task.query.filter_by(id=id, tenant_id=g.get("tenant_id")).first()
 
     if task is None:
         abort(404, f"Task id {id} doesn't exist.")
@@ -146,15 +182,22 @@ def get_latest_done_task(user_id):
         Task.query.with_entities(
             Task.id,
             User.username,
+            User.tenant_id,
             Task.author_id,
             Task.created,
             Task.due_date,
             Task.title,
             Task.body,
             Task.status,
+            Task.tenant_id,
         )
         .join(User, Task.author_id == User.id)
-        .filter(Task.author_id == user_id, Task.status == "DONE")
+        .filter(
+            Task.author_id == user_id,
+            Task.status == "DONE",
+            Task.tenant_id == g.get("tenant_id"),
+            User.tenant_id == g.get("tenant_id"),
+        )
         .order_by(Task.created.desc())
         .first()
     )
@@ -164,9 +207,14 @@ def get_status(id, check_user=True):
     current_app.logger.debug("Querying database for status of task %s.", id)
 
     status = (
-        Task.query.with_entities(Task.id, Task.author_id, Task.status)
+        Task.query.with_entities(Task.id, Task.author_id, Task.status, Task.tenant_id)
         .join(User, Task.author_id == User.id)
-        .filter(Task.id == id, Task.status == "DONE")
+        .filter(
+            Task.id == id,
+            Task.status == "DONE",
+            User.tenant_id == g.get("tenant_id"),
+            Task.tenant_id == g.get("tenant_id"),
+        )
         .first()
     )
 
@@ -192,9 +240,16 @@ def get_done_task(id, check_user=True):
             Task.title,
             Task.body,
             Task.status,
+            Task.tenant_id,
+            User.tenant_id,
         )
         .join(User, Task.author_id == User.id)
-        .filter(Task.id == id, Task.status == "DONE")
+        .filter(
+            Task.id == id,
+            Task.status == "DONE",
+            User.tenant_id == g.get("tenant_id"),
+            Task.tenant_id == g.get("tenant_id"),
+        )
         .first()
     )
 
