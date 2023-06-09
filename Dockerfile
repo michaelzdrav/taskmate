@@ -1,4 +1,4 @@
-FROM python:3.8.16-slim-bullseye
+FROM python:3.11.4-slim-bullseye
 
 # Set the working directory
 WORKDIR /run
