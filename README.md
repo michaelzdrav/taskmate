@@ -142,3 +142,9 @@ Order depends on what I feel like working on when I have the free time 😃
 - Scheduled pg_cron for setting overdue date, and start sql-vacuum:
   - https://github.com/citusdata/pg_cron
   - https://www.postgresql.org/docs/current/sql-vacuum.html
+- Scheduler for setting overdue date, and start sql-vacuum
+  - https://digon.io/hyd/project/scheduler/t/master/pages/examples/quick_start.html
+  - https://digon.io/hyd/project/scheduler/t/master/pages/examples/asyncio.html
+- Removed unused packages:
+  - https://stackoverflow.com/questions/25376213/delete-unused-packages-from-requirements-file
+- Enable HTTPS

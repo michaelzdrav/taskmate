@@ -7,13 +7,17 @@ from flask import (
     request,
     url_for,
     current_app,
+    session,
+    jsonify,
 )
 
+import os
 from .models import Task, User, TaskComment
 from web.auth import login_required
 from . import db
+from .timezones import get_timezones
 
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from .mail import send_new_task_email
 
 bp = Blueprint("landing", __name__)
@@ -30,11 +34,11 @@ from .queries import (
     get_latest_done_task,
     get_done_task,
     get_status,
+    set_timezone_setting,
+    get_timezone_setting,
 )
 
 from functools import wraps
-from flask import current_app
-
 
 def mobile_check():
     user_agent_string = request.headers.get("User-Agent")
@@ -440,15 +444,6 @@ def update_task(id):
     task = get_task(id)
     return render_template("landing/edit.html", task=task)
 
-
-# TODO implement this to run with daily check
-# @bp.route("/<int:id>/overdue", methods=("POST",))
-# @login_required
-# def move_overdue(id):
-#     set_task_overdue(id)
-#     return redirect(url_for("landing.index"))
-
-
 @bp.route("/<int:id>/delete", methods=("POST",))
 @login_required
 def delete(id):
@@ -473,3 +468,45 @@ def delete(id):
         db.session.delete(task)
         db.session.commit()
         return redirect(url_for("landing.done"))
+
+
+@bp.route("/settings", methods=["GET"])
+def show_settings():
+    try:
+        selected = get_timezone_setting(g.user.tenant_id)
+        return render_template(
+            "landing/settings.html", timezones=get_timezones(), selected=selected
+        )
+    except Exception as e:
+        current_app.logger.debug(
+            "Error retrieving timezone in /settings for [tenant_id] %s User [id] %s.",
+            g.user.tenant_id,
+            g.user.id,
+        )
+        return render_template("landing/settings.html", timezones=get_timezones())
+
+
+@bp.route("/settings", methods=["POST"])
+@login_required
+def save_settings():
+    timezone = request.form.get("timezone")
+    session["timezone"] = timezone
+    set_timezone_setting(g.user.tenant_id, timezone)
+    current_app.logger.info("Timezone has been set to %s.", session["timezone"])
+    flash(f'Timezone has been set to {session["timezone"]}')
+
+    return redirect(url_for("landing.show_settings"))
+
+
+@bp.route("/robots.txt")
+def robots_txt():
+    return render_template("robots.txt")
+
+# TODO run this with scheduler
+# @bp.route("/<int:id>/overdue", methods=("POST",))
+# @login_required
+# def move_overdue(id):
+#     set_task_overdue(id)
+#     print("Moving task to overdue")
+#     return redirect(url_for("landing.index"))
+

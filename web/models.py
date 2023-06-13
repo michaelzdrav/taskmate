@@ -4,6 +4,7 @@ from web import db
 class Tenant(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.Text, unique=True, nullable=False)
+    timezone = db.Column(db.Text, nullable=False, default="UTC")
 
     def __repr__(self):
         return "<Tenant {}>".format(self.name)

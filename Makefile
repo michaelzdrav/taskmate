@@ -14,6 +14,8 @@ env:
 		echo "SQLALCHEMY_DATABASE_URI=postgresql://username:password@host:port/taskmate"; \
 		echo "DATABASE_HOST=postgresql"; \
 		echo "DATABASE_PORT=5432"; \
+		echo "CELERY_RESULT_BACKEND=redis://localhost:6379"; \
+		echo "CELERY_BROKER_URL=redis://localhost:6379"; \
 		echo "Created .env"; \
 	fi
 

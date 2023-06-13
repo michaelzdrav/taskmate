@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /error/
+Disallow: /create/
+Disallow: /done/
+Disallow: /settings/
+
+Sitemap: http://taskmate.digital/sitemap.xml

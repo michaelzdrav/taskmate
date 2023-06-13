@@ -1,119 +1,34 @@
 {% extends 'base.html' %}
 
-{% block header %}
-<h1>{% block title %}Settings{% endblock %}</h1>
-<script type="text/javascript" src="{{ url_for('static', filename='comment.js') }}"></script>
-{% if g.user %}
-<a class="action" href="{{ url_for('landing.done') }}">Done Tasks</a>
-<a class="action" href="{{ url_for('landing.create') }}">New</a>
-{% endif %}
-{% endblock %}
-
 {% block content %}
-{% if overdue|length > 1 %}
-<span>You have {{overdue|length}} tasks overdue!</span>
-{% else %}
-<span>You have 0 tasks overdue!</span>
-{% endif %}
-
-{% for task in tasks %}
-  <article class="post">
-    <header>
-      <div>
-        <h2>{{ task['title'] }}</h2>
-        <div class="about">ID: {{ task['id'] }}</div>
-        <div class="about">Created on {{ task['created'].strftime('%Y-%m-%d') }}</div>
-        {% if task['due_date'] %}
-        <div class="about">Due Date {{ task['due_date'] }}</div>
-        {% if task['STATUS'] == "OVERDUE" %}
-        <div class="danger">OVERDUE</div>
-        {% endif %}
-        {% endif %}
-
+<div class="vh-100 d-flex align-items-center justify-content-center">
+  <div>
+    <div class="card text-bg-secondary">
+      <div class="card-header">
+        <h3 class="card-title mb-3 font-weight-normal text-center">{% block title %}Organisation Settings{% endblock %}</h3>
       </div>
-
-      {% if g.user['id'] == task['author_id'] %}
-      <div class="post">
-        <form action="{{ url_for('landing.delete', id=task['id']) }}" method="post">
-          <input class="danger" type="submit" value="Delete" onclick="return confirm('Delete task?');">
-          <noscript>
-            <input type="submit" value="Submit form!" />
-          </noscript>
+      <div class="card-body">
+        <p class="font-weight-normal text-center">Change the settings for your entire organisation below.</p>
+        <hr>
+        <form action="{{ url_for('landing.save_settings') }}" method="POST">
+          <div class="row">
+            <div class="col-md-3">
+              <label for="timezone">Timezone:</label>
+            </div>
+            <div class="col-md-9">
+              <select name="timezone" id="timezone">
+                {% for timezone in timezones %}
+                <option value="{{ timezone }}" {% if selected == timezone %}selected{% endif %}>{{ timezone }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group text-center mt-3">
+            <input type="submit" value="Save" class="btn btn-primary">
+          </div>
         </form>
       </div>
-
-      <div class="post">
-        <form action="{{ url_for('landing.update_task', id=task['id']) }}" method="get">
-          <input class="edit" type="submit" value="Edit" onclick="return confirm('Edit?');">
-          <noscript>
-            <input type="submit" value="Submit form!" />
-          </noscript>
-        </form>
-      </div>
-
-      <div class="post">
-        <form action="{{ url_for('landing.move_done', id=task['id']) }}" method="post">
-          <input class="done" type="submit" value="Done" onclick="return confirm('Move to Done?');">
-          <noscript>
-            <input type="submit" value="Submit form!" />
-          </noscript>
-        </form>
-      </div>
-      {% endif %}
-
-    </header>
-
-    {% if task['body'] %}
-    <details>
-      <summary>
-        Description
-        <span class="icon">👇</span>
-      </summary>
-      <p>
-        {{ task['body'] }}
-      </p>
-    </details>
-    {% endif %}  
-
-    <details>
-      <summary>
-        Comments
-        <span class="icon">👇</span>
-      </summary>
- 
-      <input class="add" type="submit" value="Add Comment" onclick="onButtonClick('{{ tasks.index(task) }}')">
-
-      <div class="post">
-        <form action="{{ url_for('landing.add_comment', id=task['id']) }}" method="post">
-          <p>
-            <textarea class="hide" name="comment" id="comment" value=""></textarea>
-            <input class="hide" id="save" name="save" type="submit" value="Save">
-          </p> 
-
-          <noscript>
-            <input type="submit" value="Submit form!" />
-          </noscript>
-        </form>
-      </div>
- 
-      {% for comment in comments %}
-
-      {% if comment['task_id'] == task['id']  %}
-      <hr class="comment">
-      <p>
-        Commented on: {{ comment['created']}}
-      </p>
-      <p>
-        Comment: {{ comment['content'] }}
-      </p>
-      {% endif %}  
-      {% endfor %}
-    </details>
-
-  </article>
-
-{% if not loop.last %}
-<hr>
-{% endif %}
-{% endfor %}
+    </div>
+  </div>
+</div>
 {% endblock %}

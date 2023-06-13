@@ -3,7 +3,10 @@ FROM python:3.8.16-slim-bullseye
 # Set the working directory
 WORKDIR /run
 
-RUN apt-get update && apt-get install -y netcat
+RUN apt-get update \
+    && apt-get install -y \
+    build-essential \
+    netcat
 
 # Copy requirements.txt and install dependencies
 RUN python -m venv venv

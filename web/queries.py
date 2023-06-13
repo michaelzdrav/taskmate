@@ -1,7 +1,7 @@
 from flask import current_app, g
 from werkzeug.exceptions import abort
 from . import db
-from .models import User, Task, TaskComment
+from .models import User, Task, TaskComment, Tenant
 
 
 def get_active_tasks(user_id):
@@ -268,3 +268,38 @@ def set_task_overdue(id):
     if task:
         task.status = "OVERDUE"
         db.session.commit()
+
+def get_timezone_setting(tenant_id):
+    try:
+        tenant = None
+        if tenant_id == g.get("tenant_id"):
+            tenant = Tenant.query.get(tenant_id)
+        
+        if tenant:
+            timezone = tenant.timezone
+            current_app.logger.info("Got timezone %s for [tenant_id] %s, User [id] %s.", timezone, tenant_id, g.user.id)
+            return timezone
+        else:
+            current_app.logger.error("Tenant not found for [tenant_id] %s, User [id] %s.", tenant_id, g.user.id)
+            return None
+
+    except Exception as e:
+        current_app.logger.error("An error occurred while getting the timezone: %s, for [tenant_id] %s, User [id] %s", str(e), tenant_id, g.user.id)
+        return None
+
+def set_timezone_setting(tenant_id, timezone):
+    try:
+        tenant = Tenant.query.get(tenant_id)
+        
+        if tenant:
+            tenant.timezone = timezone
+            db.session.commit()
+            current_app.logger.info("Timezone set to %s for [tenant_id] %s, User [id] %s.", timezone, tenant_id, g.user.id)
+            return True
+        else:
+            current_app.logger.error("Tenant not found for [tenant_id] %s, User [id] %s.", tenant_id, g.user.id)
+            return False
+    except Exception as e:
+        current_app.logger.error("An error occurred while setting the timezone: %s, for [tenant_id] %s, User [id] %s", str(e), tenant_id, g.user.id)
+        return None
+    pass
