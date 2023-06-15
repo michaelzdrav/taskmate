@@ -1,5 +1,15 @@
 {% extends 'base.html' %}
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-E6H7J2LV9X"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-E6H7J2LV9X');
+</script>
+
 {% block header %}
 {% if g.user %}
 {% if view %}

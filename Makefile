@@ -30,11 +30,6 @@ docker:
 	docker-compose -f ./docker-compose/docker-compose.yaml down
 	docker-compose -f ./docker-compose/docker-compose.yaml up -d
 
-install: env
-	virtualenv venv; \
-	source venv/bin/activate; \
-	pip3 install -r requirements.txt;
-
 dependencies:
 	python -m pip install -r requirements.txt
 	pip3 install -e .
@@ -57,9 +52,6 @@ run:
 db:
 	flask --app web db migrate; \
 	flask --app web db upgrade;
-
-db-view:
-	sqlite3 instance/web.sqlite;
 
 freeze:
 	pip3 freeze > requirements.txt;

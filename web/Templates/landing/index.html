@@ -1,5 +1,18 @@
 {% extends 'base.html' %}
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-E6H7J2LV9X"></script>
+<script>
+   window.dataLayer = window.dataLayer || [];
+
+   function gtag() {
+      dataLayer.push(arguments);
+   }
+   gtag('js', new Date());
+
+   gtag('config', 'G-E6H7J2LV9X');
+</script>
+
 {% block header %}
 <style>
    .task-list {
@@ -80,10 +93,10 @@
                      <a class="badge mt-0 bg-info text-light">No due date.</a>
                      {% endif %}
                      <br />
-                     <div class="btn btn-link btn-lg word-wrap" 
-                     onclick="document.getElementById('task-form-{{ task.id }}').submit();">
-                    {{ task.title }}
-                </div>
+                     <div class="btn btn-link btn-lg word-wrap"
+                        onclick="document.getElementById('task-form-{{ task.id }}').submit();">
+                        {{ task.title }}
+                     </div>
                      <form id="task-form-{{ task.id }}" action="{{ url_for('landing.load_view', id=task.id) }}"
                         method="post">
                         <button type="submit" style="display: none;"></button>
@@ -235,7 +248,7 @@
                         {% endif %}
                         {% endfor %}
                      </tbody>
-                  </table>                  
+                  </table>
                </div>
             </div>
          </div>

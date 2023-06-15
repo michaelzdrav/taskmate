@@ -6,21 +6,18 @@ from flask_mail import Mail
 from logging.config import dictConfig
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from apscheduler.schedulers.background import BackgroundScheduler
-from .scheduler import start_scheduler
+
 from datetime import datetime, timedelta
 from flask_talisman import Talisman
+from flask_paranoid import Paranoid
 
 db = SQLAlchemy()
 migrate = Migrate()
 mail = Mail()
-scheduler = BackgroundScheduler()
 
 
 def create_app(test_config=None):
     load_dotenv()
-
-    # create and configure the app
     app = Flask(
         __name__,
         instance_path=os.path.join(os.getcwd(), "instance"),
@@ -123,10 +120,10 @@ def create_app(test_config=None):
     app.register_blueprint(landing.bp)
     app.add_url_rule("/", endpoint="index")
 
-    # TODO enable scheduler when completed
-    # start_scheduler(scheduler)
-
     # TODO enable Talisman once SSL is enabled
     # Talisman(app, content_security_policy=None)
+
+    paranoid = Paranoid(app)
+    paranoid.redirect_view = "/"
 
     return app

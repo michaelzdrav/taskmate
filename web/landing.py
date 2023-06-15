@@ -8,7 +8,6 @@ from flask import (
     url_for,
     current_app,
     session,
-    jsonify,
 )
 
 import os
@@ -17,8 +16,8 @@ from web.auth import login_required
 from . import db
 from .timezones import get_timezones
 
-from datetime import datetime, date, timedelta
-from .mail import send_new_task_email
+from datetime import datetime, date
+# from .mail import send_new_task_email
 
 bp = Blueprint("landing", __name__)
 from .queries import (
@@ -36,9 +35,8 @@ from .queries import (
     get_status,
     set_timezone_setting,
     get_timezone_setting,
+    # check_expired_tasks
 )
-
-from functools import wraps
 
 def mobile_check():
     user_agent_string = request.headers.get("User-Agent")
@@ -509,4 +507,3 @@ def robots_txt():
 #     set_task_overdue(id)
 #     print("Moving task to overdue")
 #     return redirect(url_for("landing.index"))
-

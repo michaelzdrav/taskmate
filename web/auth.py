@@ -1,4 +1,5 @@
 import functools
+from datetime import date
 
 from flask import (
     Blueprint,
@@ -14,7 +15,7 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from . import db
-from .models import User, Tenant
+from .models import User, Tenant, Task
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -23,9 +24,36 @@ def get_current_tenant_id():
     return session.get("tenant_id")
 
 
+# Check expired tasks on user login
+def check_for_expired_tasks():
+    today = date.today()
+    tenants = db.session.query(Tenant).all()
+
+    for tenant in tenants:
+        tasks = db.session.query(Task).filter(Task.tenant_id == tenant.id).all()
+
+        for task in tasks:
+            if task.due_date and task.due_date < today:
+                task.status = "OVERDUE"
+
+            current_app.logger.info(
+                "Task Check set task [id] %s in tenancy [id] %s to OVERDUE",
+                task.id,
+                tenant.id,
+            )
+
+            task_id = task.id
+            due_date = task.due_date
+            status = task.status
+        db.session.commit()
+    db.session.commit()
+
+
 @bp.before_app_request
 def set_current_tenant():
     g.tenant_id = get_current_tenant_id()
+    check_for_expired_tasks()
+
 
 @bp.route("/register", methods=("GET", "POST"))
 def register():
@@ -54,7 +82,10 @@ def register():
 
         user_agent_string = request.headers.get("User-Agent")
         current_app.logger.info(
-            "Registration attempt - Username: %s, IP: %s. User-Agent: %s", username, request.remote_addr, user_agent_string
+            "Registration attempt - Username: %s, IP: %s. User-Agent: %s",
+            username,
+            request.remote_addr,
+            user_agent_string,
         )
 
         if error is None:
@@ -73,7 +104,6 @@ def register():
                 db.session.add(new_user)
                 db.session.commit()
             except db.IntegrityError:
-
                 current_app.logger.info("User %s is already registered.", username)
                 error = f"User {username} is already registered."
             else:
@@ -97,17 +127,20 @@ def login():
 
         if user is None:
             current_app.logger.info("Failed login - Incorrect username: %s", username)
-            error = "Incorrect username."
+            error = "Incorrect username or password."
 
         elif not check_password_hash(user.password, password):
             current_app.logger.info(
                 "Failed login - Incorrect password for username: %s", username
             )
-            error = "Incorrect password."
+            error = "Incorrect username or password."
 
         user_agent_string = request.headers.get("User-Agent")
         current_app.logger.info(
-            "Log In attempt - Username: %s. IP: %s. User-Agent: %s", username, request.remote_addr, user_agent_string
+            "Log In attempt - Username: %s. IP: %s. User-Agent: %s",
+            username,
+            request.remote_addr,
+            user_agent_string,
         )
 
         if error is None:
@@ -145,7 +178,10 @@ def load_logged_in_user():
 def logout():
     user_agent_string = request.headers.get("User-Agent")
     current_app.logger.info(
-        "Log Out attempt - Username: %s. IP: %s. User-Agent: %s", session.get("username"), request.remote_addr, user_agent_string
+        "Log Out attempt - Username: %s. IP: %s. User-Agent: %s",
+        session.get("username"),
+        request.remote_addr,
+        user_agent_string,
     )
 
     tenant = session.get("tenant_id")
