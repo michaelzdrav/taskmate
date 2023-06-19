@@ -135,3 +135,4 @@ Order depends on what I feel like working on when I have the free time 😃
   - [ ] Account verification
 - [ ] Fix text wrapping on mobile/desktop view
 - [ ] Pytest for Flask-SQLAlchemy: https://github.com/jeancochrane/pytest-flask-sqlalchemy
+- Need to fix the images as they don't work from github anymore
