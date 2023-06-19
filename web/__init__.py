@@ -126,7 +126,7 @@ def create_app(test_config=None):
             for rule in app.url_map.iter_rules():
                 if "GET" in rule.methods and len(rule.arguments) == 0:
                     pages.append(
-                        ["http://taskmate.digital" + str(rule.rule), ten_days_ago]
+                        ["https://taskmate.digital" + str(rule.rule), ten_days_ago]
                     )
 
             sitemap_xml = render_template("sitemap_template.xml", pages=pages)

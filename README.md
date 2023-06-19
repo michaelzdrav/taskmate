@@ -4,7 +4,7 @@ Heres a basic to do list to keep you accountable of your tasks. Simply register 
 When your task is overdue, you will see an "Overdue" message displayed, along with an increment of the overdue task counter in the UI. Once completed, move the task to Done. Otherwise, Delete the task to be lost forever.
 
 ### Live Demo
-http://taskmate.digital
+https://taskmate.digital
 
 ## Features
 
@@ -128,8 +128,8 @@ Order depends on what I feel like working on when I have the free time 😃
 - [ ] Introduce background tasks with celery (for emails etc) to reduce waiting times   ⌛
   - https://flask.palletsprojects.com/en/2.3.x/patterns/celery/
 - [ ] Improve security
-  - [ ] Enable HTTPS
-  - [ ] Flask-talisman
+  - [x] Enable HTTPS
+  - [] Flask-talisman
   - [x] Flask-paranoid
   - [ ] Password Reset
   - [ ] Password complexity

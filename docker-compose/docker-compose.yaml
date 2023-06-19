@@ -1,9 +1,9 @@
 version: '3'
 services:
   taskmate:
-    image: mz1234/taskmate:latest
+    image: mz1234/taskmate:20
     ports:
-      - '80:5001'
+      - '5001:5001'
     volumes:
       - '../web:/run/web'
       - '../migrations:/run/migrations'
