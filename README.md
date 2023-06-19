@@ -129,7 +129,7 @@ Order depends on what I feel like working on when I have the free time 😃
   - https://flask.palletsprojects.com/en/2.3.x/patterns/celery/
 - [ ] Improve security
   - [x] Enable HTTPS
-  - [] Flask-talisman
+  - [x] Flask-talisman
   - [x] Flask-paranoid
   - [ ] Password Reset
   - [ ] Password complexity
