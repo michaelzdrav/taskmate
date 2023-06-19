@@ -114,6 +114,7 @@ Order depends on what I feel like working on when I have the free time 😃
 - [x] Switch to flask-sqlalchemy to support more db engines
 - [x] Add timezone support
 - [ ] Test errors - redirect with flash instead of continuing with flash  ⌛
+- [ ] Add support for multiple users in a tenancy
 - [ ] SMTP integration for notifications (task creation/overdue/comments left)
 - [ ] Add advanced pytests ⌛
 - [ ] Refactoring ⌛

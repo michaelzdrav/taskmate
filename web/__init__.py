@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 from datetime import datetime, timedelta
-from flask_talisman import Talisman
+# from flask_talisman import Talisman
 from flask_paranoid import Paranoid
 
 db = SQLAlchemy()
