@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-E6H7J2LV9X"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-E6H7J2LV9X');
+</script>
+
+{% block header %}
+{% if g.user %}
+{% if view %}
+
+<div class="list-group-item task-list w-100 bg-light table-responsive">
+
+    <div class="list-group-item h-100 w-100">
+        <h2 class="text-wrap" style="word-break: break-word;">{{ view.title }}</h2>
+
+        <div class="row mb-3 mt-3">
+            {% if status == "Active" %}
+            <div class="post mr-1">
+                <form action="{{ url_for('landing.update_task', id=view.id) }}" method="get">
+                    <input class="edit btn-sm btn-primary" type="submit" value="Edit Task"
+                        onclick="return confirm('Edit?');">
+                    <noscript>
+                        <input type="submit" value="Submit form!" />
+                    </noscript>
+                </form>
+            </div>
+            <div class="post">
+                <form action="{{ url_for('landing.move_done', id=view.id) }}" method="post">
+                    <input class="done btn-sm btn-success" type="submit" value="Move to Done"
+                        onclick="return confirm('Move to Done?');">
+                    <noscript>
+                        <input type="submit" value="Submit form!" />
+                    </noscript>
+                </form>
+            </div>
+            {% endif %}
+            <div class="post ml-1">
+                <form action="{{ url_for('landing.delete', id=view.id) }}" method="post">
+                    <input class="danger btn-sm btn-danger " type="submit" value="Delete Task"
+                        onclick="return confirm('Delete task?');">
+                    <noscript>
+                        <input type="submit" value="Submit form!" />
+                    </noscript>
+                </form>
+            </div>
+        </div>
+
+        <table class="table table-responsive-sm">
+            <tbody>
+                <tr>
+                    <th scope="row" class="col-md-4">Status</th>
+                    <td class="col-md-8">{{ view.status }}</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-md-4">Due Date</th>
+                    <td class="col-md-8">
+                        {% if view.due_date %}
+                        {% if view.status == "OVERDUE" %}
+                        <a class="badge mt-0 bg-danger text-light text-wrap">{{ view.due_date.strftime('%d/%m/%Y') }}</a>
+                        {% else %}
+                        <a class="badge mt-0 bg-success text-light text-wrap">{{ view.due_date.strftime('%d/%m/%Y') }}</a>
+                        {% endif %}
+                        {% else %}
+                        <a class="badge mt-0 bg-info text-light text-wrap">No due date.</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Created On</th>
+                    <td>{{ view.created.strftime("%Y-%m-%d %H:%M:%S") | convert_utc_to_timezone }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Created By</th>
+                    {% if view.author_id == g.user.id %}
+                    <td>{{ g.user.username }}</td>
+                    {% else %}
+                    <td>{{ view.author_id }}</td>
+                    {% endif %}
+                </tr>
+            </tbody>
+        </table>
+        <div class="w-100 mt-3 mb-3">
+            <hr />
+            <b>Task Description</b>
+            <hr />
+            {% if view.body %}
+            <p style="word-wrap: break-word;">{{ view.body }}</p>
+            {% else %}
+            <p class="text-wrap">No description set.</p>
+            {% endif %}
+            <br />
+        </div>
+        <div class="w-100">
+            <b>Comments</b>
+            <hr />
+            <div class="post">
+                <button class="add btn btn-outline-primary" onclick="toggleCommentSection('{{ view.id }}')">Add a
+                    comment</button>
+                <form class="mt-2" action="{{ url_for('landing.add_comment', id=view.id) }}" method="post">
+                    <div id="commentSection{{ view.id }}" class="d-none">
+                        <textarea class="form-control text-wrap" name="comment" id="comment" value=""></textarea>
+                        <input class="btn btn-success mt-2" id="save" name="save" type="submit" value="Save">
+                    </div>
+                    <noscript>
+                        <input type="submit" value="Submit form!" />
+                    </noscript>
+                </form>
+            </div>
+            {% for comment in comments %}
+            {% if comment.task_id == view.id %}
+            <hr class="comment">
+            <p>
+                Commented on: {{ comment.created.strftime("%Y-%m-%d %H:%M:%S") | convert_utc_to_timezone }}
+            </p>
+            <p class="text-wrap">
+                {{ comment.content }}
+            </p>
+            <div class="post">
+                <form action="{{ url_for('landing.delete_comment', id=comment.id, task=view.id) }}" method="post">
+                    <input class="btn btn-outline-danger" type="submit" value="Delete comment"
+                        onclick="return confirm('Delete comment?');">
+                    <noscript>
+                        <input type="submit" value="Submit form!" />
+                    </noscript>
+                </form>
+            </div>
+            {% endif %}
+            {% endfor %}
+            <br />
+            <br />
+        </div>
+
+
+    </div>
+    {% endif %}
+    {% endif %}
+
+    {% endblock %}

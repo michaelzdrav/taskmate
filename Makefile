@@ -11,31 +11,31 @@ env:
 		echo "MAIL_USERNAME=admin" >> .env; \
 		echo "MAIL_PASSWORD=password" >> .env; \
 		echo "SMTP_ENABLED=False" >> .env; \
+		echo "SQLALCHEMY_DATABASE_URI=postgresql://username:password@host:port/taskmate"; \
+		echo "DATABASE_HOST=postgresql"; \
+		echo "DATABASE_PORT=5432"; \
+		echo "CELERY_RESULT_BACKEND=redis://localhost:6379"; \
+		echo "CELERY_BROKER_URL=redis://localhost:6379"; \
 		echo "Created .env"; \
 	fi
 
 build: freeze
-	docker build -t taskmate:latest .
+	BUILDKIT=1 docker build -t taskmate:latest . --cache-from=python:3.8.16-slim-bullseye
 
-docker-dev: 
-	docker-compose -f ./docker-compose/docker-compose-dev.yaml down
-	docker-compose -f ./docker-compose/docker-compose-dev.yaml up -d
+docker-dev:
+	COMPOSE_DOCKER_CLI_BUILD=1 docker-compose -f ./docker-compose/docker-compose-dev.yaml down
+	COMPOSE_DOCKER_CLI_BUILD=1 docker-compose -f ./docker-compose/docker-compose-dev.yaml up -d
 
 docker:
-	docker-compose -f ./docker-compose/docker-compose.yaml down
-	docker-compose -f ./docker-compose/docker-compose.yaml up -d
-
-install: env
-	virtualenv venv; \
-	source venv/bin/activate; \
-	pip install -r requirements.txt;
+	COMPOSE_DOCKER_CLI_BUILD=1 docker-compose -f ./docker-compose/docker-compose.yaml down
+	COMPOSE_DOCKER_CLI_BUILD=1 docker-compose -f ./docker-compose/docker-compose.yaml up -d
 
 dependencies:
 	python -m pip install -r requirements.txt
-	pip install -e .
+	pip3 install -e .
 
 sast:
-	pip install bandit
+	pip3 install bandit
 	bandit -r web
 
 test:
@@ -50,11 +50,8 @@ run:
 	gunicorn 'web:create_app()'
 
 db:
-	rm instance/web.sqlite; \
-	flask --app web init-db;
-
-db-view:
-	sqlite3 instance/web.sqlite;
+	flask --app web db migrate; \
+	flask --app web db upgrade;
 
 freeze:
 	pip3 freeze > requirements.txt;

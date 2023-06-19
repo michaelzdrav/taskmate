@@ -3,28 +3,27 @@ Heres a basic to do list to keep you accountable of your tasks. Simply register 
 
 When your task is overdue, you will see an "Overdue" message displayed, along with an increment of the overdue task counter in the UI. Once completed, move the task to Done. Otherwise, Delete the task to be lost forever.
 
-Please make sure to remove the <b>test</b> user in <b>web/db.py</b> if you are going to expose this to the Internet.
-
 ### Live Demo
-http://taskmate.duckdns.org/
-
+http://taskmate.digital
 
 ## Features
 
+- Multitenancy with a shared database schema
 - Basic Authentication
-- Written in Flask
+- Secure session management protected by IP and login device
+- Written in Flask with gunicorn for performance
 - Feature rich To Do list
 - Easy ability to self host via cli or Docker
 - Application wide logging
 - SMTP support
 - Clean and simple UI
-- SQLite database support (more options coming)
-
-## Dependencies
-- Make sure you have sqlite3 installed locally
+- Postgres, SQLite support
+- Timezone support
 
 ## Setup
-Initialise the database and virtual environment.
+Initialise the database and virtual environment. 
+🚨 Please note that psycopg2 is needed for ```make db``` but needs to be removed when building the Docker image.
+
 ```bash
   virtualenv venv
   source venv/bin/active
@@ -40,6 +39,7 @@ Run with the ```Makefile```
 ```bash
   make run
 ```
+
 You can run with debug mode enabled with the ```Makefile```
 ```bash
   make debug
@@ -75,12 +75,6 @@ Run Pytest against the code, including test coverage
   make test sast
 ```
 
-Inspecting the database can be done using the Makefile also
-
-```bash
-  make db-view
-```
-
 ## Authors
 
 - [@michaelzdrav](https://www.github.com/michaelzdrav)
@@ -109,29 +103,35 @@ Inspecting the database can be done using the Makefile also
 ## Roadmap 
 Order depends on what I feel like working on when I have the free time 😃
 
-- ~~CI/CD pipeline to build image and push to Dockerhub~~ 
-- ~~Add pytest coverage (#TODO check out https://github.com/pytest-dev/pytest-cov)~~
-- ~~Introduction of testing using pytests, (#TODO check out https://flask.palletsprojects.com/en/2.2.x/tutorial/tests/)~~
-- ~~SMTP integration for notifications (task creation/overdue/comments left)~~
-~~- Proper logging instead of just printing values everywhere~~
-- ~~Redesigned frontend using Bootstrap~~
-~~- Add edit & delete for comments~~
-~~ - Updated UI ~~
-~~- Deploying this in AWS~~
-- Add advanced pytests ⌛
-- Refactoring ⌛
-  - Refactor create/update to use functions to check due_date 
-- Input validation, text length limits for title, description, comments
-- Add settings page, configure timezones, store tasks in local timezones 
-- Add get_task before anything that uses the existing task to check it exists
-- File uploads for each task
-- Add caching for performance
-- Switch to flask-sqlalchemy to support more db engines https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-iv-database 
-- Introduce background tasks with celery (for emails etc) to reduce waiting times 
+- [x] CI/CD pipeline to build image and push to Dockerhub
+- [x] Add pytest coverage
+- [x] Introduction of testing using pytests
+- [x] Proper logging instead of just printing values everywhere
+- [x] Redesigned frontend using Bootstrap
+- [x] Add edit & delete for comments
+- [x] Deploying this in AWS
+- [x] Add get_task before anything that uses the existing task to check it exists
+- [x] Switch to flask-sqlalchemy to support more db engines
+- [x] Add timezone support
+- [ ] Test errors - redirect with flash instead of continuing with flash  ⌛
+- [ ] SMTP integration for notifications (task creation/overdue/comments left)
+- [ ] Add advanced pytests ⌛
+- [ ] Refactoring ⌛
+  - [ ] Removed unused packages:
+    - https://stackoverflow.com/questions/25376213/delete-unused-packages-from-requirements-file
+  - [ ] Clean up HTML
+  - [ ] Refactor application structure
+- [ ] Input validation, text length limits for title, description, comments
+- [ ] File uploads for each task
+- [ ] Add caching for performance
+- [ ] Introduce background tasks with celery (for emails etc) to reduce waiting times   ⌛
   - https://flask.palletsprojects.com/en/2.3.x/patterns/celery/
-- Improve security
-  - Flask-talisman
-  - Flask-paranoid
-  - Password Reset
-  - Password complexity
-  - Account verification
+- [ ] Improve security
+  - [ ] Enable HTTPS
+  - [ ] Flask-talisman
+  - [x] Flask-paranoid
+  - [ ] Password Reset
+  - [ ] Password complexity
+  - [ ] Account verification
+- [ ] Fix text wrapping on mobile/desktop view
+- [ ] Pytest for Flask-SQLAlchemy: https://github.com/jeancochrane/pytest-flask-sqlalchemy

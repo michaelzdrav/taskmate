@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-E6H7J2LV9X"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-E6H7J2LV9X');
+</script>
+
+{% block header %}
+{% if g.user %}
+{% if tasks %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 mt-2 mb-2">
+            <div class="row">
+                <div class="col-md-4">
+                    {% if status == "Active" %}
+                    <h4 class="">Active Tasks</h4>
+                    {% if overdue|length >= 1 %}
+                    <a>You have {{overdue|length}} tasks overdue!</a>
+                    {% else %}
+                    <a>You have 0 tasks overdue!</a>
+                    {% endif %}
+                    {% else %}
+                    <h4 class="">Done Tasks</h4>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                </div>
+                <div class="col-md-4">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 task-list border-top border-right shadow-sm">
+            <div class="row mb-1 mt-1">
+                <div class="col-2">
+                </div>
+                <div class="col-8">
+                    <a href="{{ url_for('landing.create') }}">
+                        <button type="button" class="btn-sm btn-block text-white bg-success mb-2">
+                            New
+                        </button>
+                    </a>
+                </div>
+                <div class="col-2">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <ul class="list-group">
+                        {% for task in tasks %}
+                        <li class="list-group-item">
+                            {% if task.due_date %}
+                            {% if task.status == "OVERDUE" %}
+                            <a class="badge mt-0 bg-danger text-light">{{ task.due_date.strftime('%d/%m/%Y') }}</a>
+                            {% else %}
+                            <a class="badge mt-0 bg-success text-light">{{ task.due_date.strftime('%d/%m/%Y') }}</a>
+                            {% endif %}
+                            {% else %}
+                            <a class="badge mt-0 bg-info text-light text-wrap">No due date.</a>
+                            {% endif %}
+                            <br />
+                            <button class="btn btn-link btn-lg"
+                                onclick="document.getElementById('task-form-{{ task.id }}').submit();">{{ task.title }}</button>
+
+                            {% if status == "Active" %}
+                            <form id="task-form-{{ task.id }}" action="{{ url_for('landing.load_view', id=task.id) }}"
+                                method="post">
+                                <button type="submit" style="display: none;"></button>
+                            </form>
+                            {% else %}
+                            <form id="task-form-{{ task.id }}" action="{{ url_for('landing.load_doneview', id=task.id) }}"
+                                method="post">
+                                <button type="submit" style="display: none;"></button>
+                            </form>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+{% else %}
+{% if status == "Active" %}
+<div class="vh-100 d-flex align-items-center justify-content-center">
+    <div class="w-100">
+       <div class="card text-bg-secondary">
+          <div class="card-header">
+             <h3 class="card-title mb-3 font-weight-normal text-center">Let's get started 🎉</h3>
+          </div>
+          <div class="card-body">
+             <p class="font-weight-normal text-center">Welcome aboard {{ g.user.username }}! Click the button below to
+                create an active task.</p>
+             <hr>
+             <div class="d-flex justify-content-center align-items-center">
+                <a href="{{ url_for('landing.create') }}">
+                   <button type="button" class="btn-lg text-white bg-success">
+                      Create a task
+                   </button>
+                </a>
+             </div>
+          </div>
+       </div>
+    </div>
+ </div>
+{% else %}
+<div class="vh-100 d-flex align-items-center justify-content-center">
+    <div class="w-100">
+      <div class="card text-bg-secondary">
+        <div class="card-header">
+          <h3 class="card-title mb-3 font-weight-normal text-center">No tasks in <i>Done</i> status 😱</h3>
+        </div>
+        <div class="card-body">
+          <p class="font-weight-normal text-center">Hi {{ g.user.username }}, try move a task to <i>Done</i> and come
+            back to see your tasks.</p>
+          <hr>
+          <div class="d-flex justify-content-center align-items-center">
+            <a href="{{ url_for('landing.index') }}">
+              <button type="button" class="btn-lg text-white bg-success">
+                See Active Tasks
+              </button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+{% endif %}
+{% endif %}
+
+{% endblock %}

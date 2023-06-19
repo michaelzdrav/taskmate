@@ -1,5 +1,18 @@
 {% extends 'base.html' %}
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-E6H7J2LV9X"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  gtag('js', new Date());
+
+  gtag('config', 'G-E6H7J2LV9X');
+</script>
+
 {% block content %}
 <div class="vh-100 d-flex align-items-center justify-content-center">
   <div class="w-75">
@@ -9,7 +22,7 @@
         </h3>
       </div>
       <div class="card-body">
-        <p class="font-weight-normal text-center">The more detail the better!</p>  
+        <p class="font-weight-normal text-center">The more detail the better!</p>
         <hr>
         <form method="post">
           <div class="row">
@@ -24,7 +37,7 @@
           </div>
           <div class="mb-3">
             <label for="body">Description</label>
-            {% if task['body'] is not none %}   
+            {% if task['body'] is not none %}
             <textarea name="body" class="form-control" id="body">{{ task['body'] }}</textarea>
             {% else %}
             <textarea name="body" class="form-control" id="body"></textarea>

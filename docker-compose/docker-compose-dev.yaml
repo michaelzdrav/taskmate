@@ -5,18 +5,40 @@ services:
     ports:
       - '1080:1080'  
       - '1025:1025'
-
+  postgresql:
+    image: postgres
+    container_name: basic-postgresql
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=taskmate
+    ports:
+      - 5432:5432
+    volumes:
+      - /tmp/postgresql:/var/lib/postgresql/data
+  # redis:
+  #   image: redis
+  #   ports:
+  #     - '6379:6379'
   taskmate:
-    image: mz1234/taskmate:11
+    image: taskmate
     ports:
       - '80:5001'
     volumes:
-      - ../instance:/run/instance
+      - '../web:/run/web'
+      - '../migrations:/run/migrations'
     environment:
       - SECRET_KEY=test
       - MAIL_SERVER=mailcatcher
       - MAIL_PORT=1025
       - MAIL_USE_TLS=1
       - SMTP_ENABLED=True
+      - SQLALCHEMY_DATABASE_URI=postgresql://admin:password@postgresql:5432/taskmate
+      - DATABASE_HOST=postgresql
+      - DATABASE_PORT=5432
+      # - CELERY_RESULT_BACKEND=redis://redis:6379
+      # - CELERY_BROKER_URL=redis://redis:6379
     depends_on:
+      - postgresql
       - mailcatcher
+      # - redis

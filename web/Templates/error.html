@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-E6H7J2LV9X"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-E6H7J2LV9X');
+</script>
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="text-center">
+                <h1>An error has occurred.</h1>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
