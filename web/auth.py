@@ -160,6 +160,12 @@ def login():
             user_agent_string,
         )
 
+        current_app.logger.info(
+            "Log In attempt - %s, %s, %s",
+            request.headers.get('X-Forwarded-For'),
+            request.headers.get('X-Real-IP'),
+            request.headers.get('X-Client-IP'),
+        )
         if error is None:
             tenancy = Tenant.query.filter_by(id=user.tenant_id).first()
             session.clear()
