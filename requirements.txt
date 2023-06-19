@@ -3,7 +3,7 @@ amqp==5.1.1
 APScheduler==3.10.1
 async==0.6.2
 bandit==1.7.5
-billiard==3.6.4.0
+billiard==4.1.0
 blinker==1.6.2
 celery==5.2.7
 chardet==5.1.0
