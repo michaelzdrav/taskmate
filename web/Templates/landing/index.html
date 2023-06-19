@@ -184,7 +184,7 @@
                   {% if comment.task_id == view.id %}
                   <hr class="comment">
                   <p>
-                     Commented on: {{ comment.created}}
+                     Commented on: {{ comment.created.strftime("%Y-%m-%d %H:%M:%S") | convert_utc_to_timezone }}
                   </p>
                   <p>
                      {{ comment.content }}
@@ -235,7 +235,8 @@
                         </tr>
                         <tr>
                            <th scope="row">Created On</th>
-                           <td style="word-wrap: break-word;">{{ task.created }}</td>
+                           <td style="word-wrap: break-word;"><span>{{ task.created.strftime("%Y-%m-%d %H:%M:%S") | convert_utc_to_timezone }}</span>
+                           </td>
                         </tr>
                         <tr>
                            <th scope="row">Created By</th>

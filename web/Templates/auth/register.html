@@ -4,7 +4,10 @@
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E6H7J2LV9X"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
+
+  function gtag() {
+    dataLayer.push(arguments);
+  }
   gtag('js', new Date());
 
   gtag('config', 'G-E6H7J2LV9X');
@@ -26,7 +29,15 @@
         <input type="password" name="password" id="password" class="form-control mx-auto" placeholder="Password"
           required>
         <hr>
-        <input type="submit" value="Sign Up" class="btn btn-lg btn-primary btn-block">
+        <label for="timezone" class="mx-auto">Timezone:</label>
+        <select name="timezone" id="timezone" class="form-control mb-3 mx-auto">
+          {% for timezone in timezones %}
+          <option value="{{ timezone }}" {% if timezone == 'Greenwich Mean Time (GMT+0)' %}selected{% endif %}>
+            {{ timezone }}
+          </option>
+          {% endfor %}
+          <hr>
+          <input type="submit" value="Sign Up" class="btn btn-lg btn-primary btn-block">
       </form>
     </div>
   </div>

@@ -20,15 +20,15 @@ env:
 	fi
 
 build: freeze
-	docker build -t taskmate:latest .
+	BUILDKIT=1 docker build -t taskmate:latest . --cache-from=python:3.8.16-slim-bullseye
 
 docker-dev:
-	docker-compose -f ./docker-compose/docker-compose-dev.yaml down
-	docker-compose -f ./docker-compose/docker-compose-dev.yaml up -d
+	COMPOSE_DOCKER_CLI_BUILD=1 docker-compose -f ./docker-compose/docker-compose-dev.yaml down
+	COMPOSE_DOCKER_CLI_BUILD=1 docker-compose -f ./docker-compose/docker-compose-dev.yaml up -d
 
 docker:
-	docker-compose -f ./docker-compose/docker-compose.yaml down
-	docker-compose -f ./docker-compose/docker-compose.yaml up -d
+	COMPOSE_DOCKER_CLI_BUILD=1 docker-compose -f ./docker-compose/docker-compose.yaml down
+	COMPOSE_DOCKER_CLI_BUILD=1 docker-compose -f ./docker-compose/docker-compose.yaml up -d
 
 dependencies:
 	python -m pip install -r requirements.txt

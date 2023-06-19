@@ -1,5 +1,6 @@
 import functools
-from datetime import date
+from datetime import date, datetime
+from pytz import timezone
 
 from flask import (
     Blueprint,
@@ -15,7 +16,9 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from . import db
+from . import convert_utc_to_timezone
 from .models import User, Tenant, Task
+from .timezones import get_timezones, get_gmt
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -26,33 +29,40 @@ def get_current_tenant_id():
 
 # Check expired tasks on user login
 def check_for_expired_tasks():
-    today = date.today()
-    tenants = db.session.query(Tenant).all()
+    tz = session.get("timezone")
 
-    for tenant in tenants:
-        tasks = db.session.query(Task).filter(Task.tenant_id == tenant.id).all()
+    if tz is not None:
 
-        for task in tasks:
-            if task.due_date and task.due_date < today:
-                task.status = "OVERDUE"
+        today = datetime.now(timezone("UTC")).date()
 
-            current_app.logger.info(
-                "Task Check set task [id] %s in tenancy [id] %s to OVERDUE",
-                task.id,
-                tenant.id,
-            )
+        tenants = db.session.query(Tenant).all()
 
-            task_id = task.id
-            due_date = task.due_date
-            status = task.status
+        for tenant in tenants:
+            tasks = db.session.query(Task).filter(Task.tenant_id == tenant.id).all()
+
+            for task in tasks:
+                if (
+                    task.status != "OVERDUE"
+                    and task.due_date
+                    and task.due_date.date() <= today
+                ):
+                    task.status = "OVERDUE"
+
+                    current_app.logger.info(
+                        "Task Check set task [id] %s in tenancy [id] %s to OVERDUE",
+                        task.id,
+                        tenant.id,
+                    )
+
+            db.session.commit()
         db.session.commit()
-    db.session.commit()
+    else:
+        current_app.logger.info("GMT is none")
 
 
 @bp.before_app_request
 def set_current_tenant():
     g.tenant_id = get_current_tenant_id()
-    check_for_expired_tasks()
 
 
 @bp.route("/register", methods=("GET", "POST"))
@@ -61,6 +71,7 @@ def register():
         username = request.form["username"]
         password = request.form["password"]
         tenant_name = username + "_trial"
+        timezone = request.form.get("timezone")
 
         error = None
 
@@ -71,6 +82,11 @@ def register():
         # TODO enable below
         # elif not tenant_name:
         #     error = 'Tenant name is required.'
+
+        if timezone in get_timezones():
+            tenant_timezone = get_gmt(timezone)
+        else:
+            error = f"Timezone {timezone} is not a displayed choice."
 
         user = User.query.filter_by(username=username).first()
         if user is not None and user.username == username:
@@ -90,7 +106,7 @@ def register():
 
         if error is None:
             try:
-                new_tenancy = Tenant(name=tenant_name)
+                new_tenancy = Tenant(name=tenant_name, timezone=tenant_timezone)
                 db.session.add(new_tenancy)
                 db.session.commit()
                 current_app.logger.info(
@@ -112,7 +128,7 @@ def register():
 
         flash(error)
 
-    return render_template("auth/register.html")
+    return render_template("auth/register.html", timezones=get_timezones())
 
 
 @bp.route("/login", methods=("GET", "POST"))
@@ -144,16 +160,20 @@ def login():
         )
 
         if error is None:
+            tenancy = Tenant.query.filter_by(id=user.tenant_id).first()
             session.clear()
             session["user_id"] = user.id
             session["username"] = username
             session["tenant_id"] = user.tenant_id
+            session["timezone"] = tenancy.timezone
             current_app.logger.info(
-                "Tenancy %s, User_id %s, User %s has logged in.",
+                "Tenancy %s, User_id %s, User %s has logged in. Timezone: %s",
                 user.tenant_id,
                 user.id,
                 username,
+                tenancy.timezone,
             )
+            check_for_expired_tasks()
             return redirect(url_for("index"))
 
         flash(error)

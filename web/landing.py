@@ -14,9 +14,12 @@ import os
 from .models import Task, User, TaskComment
 from web.auth import login_required
 from . import db
-from .timezones import get_timezones
+from .timezones import get_timezones, get_gmt
 
 from datetime import datetime, date
+import pytz
+
+
 # from .mail import send_new_task_email
 
 bp = Blueprint("landing", __name__)
@@ -37,6 +40,7 @@ from .queries import (
     get_timezone_setting,
     # check_expired_tasks
 )
+
 
 def mobile_check():
     user_agent_string = request.headers.get("User-Agent")
@@ -166,12 +170,14 @@ def create():
         if error is not None:
             flash(error)
         else:
+            utc_time = datetime.now(pytz.timezone('UTC'))
+
             if due_date == "" and body == "":
                 current_app.logger.info(
                     "Inserting task [author_id] %s, [title] %s.", g.user.id, title
                 )
 
-                task = Task(author_id=g.user.id, title=title, tenant_id=tenant_id)
+                task = Task(author_id=g.user.id, title=title, tenant_id=tenant_id, created=utc_time)
                 db.session.add(task)
                 db.session.commit()
 
@@ -186,7 +192,7 @@ def create():
                     body,
                 )
                 task = Task(
-                    author_id=g.user.id, title=title, body=body, tenant_id=tenant_id
+                    author_id=g.user.id, title=title, body=body, tenant_id=tenant_id, created=utc_time
                 )
                 db.session.add(task)
                 db.session.commit()
@@ -209,6 +215,7 @@ def create():
                     title=title,
                     status=status,
                     tenant_id=tenant_id,
+                    created=utc_time,
                 )
                 db.session.add(task)
                 db.session.commit()
@@ -232,6 +239,7 @@ def create():
                 body=body,
                 status=status,
                 tenant_id=tenant_id,
+                created=utc_time,
             )
             db.session.add(task)
             db.session.commit()
@@ -329,10 +337,12 @@ def add_comment(id):
         error = "Comment is required."
     if error is not None:
         flash(error)
+    else:
+        utc_time = datetime.now(pytz.timezone('UTC'))
 
-    task_comment = TaskComment(task_id=id, content=comment, tenant_id=tenant_id)
-    db.session.add(task_comment)
-    db.session.commit()
+        task_comment = TaskComment(task_id=id, content=comment, tenant_id=tenant_id, created=utc_time)
+        db.session.add(task_comment)
+        db.session.commit()
 
     if task.status != "DONE":
         return load_view(id)
@@ -442,6 +452,7 @@ def update_task(id):
     task = get_task(id)
     return render_template("landing/edit.html", task=task)
 
+
 @bp.route("/<int:id>/delete", methods=("POST",))
 @login_required
 def delete(id):
@@ -471,34 +482,50 @@ def delete(id):
 @bp.route("/settings", methods=["GET"])
 def show_settings():
     try:
-        selected = get_timezone_setting(g.user.tenant_id)
+        current_timezone = get_timezone_setting(g.user.tenant_id)
+        current_app.logger.info("Got tenancy timezone %s.", current_timezone)
+        timezones = get_timezones()
+        for tz in timezones:
+            if current_timezone in tz:
+                tenant_timezone = tz
         return render_template(
-            "landing/settings.html", timezones=get_timezones(), selected=selected
+            "landing/settings.html", timezones=get_timezones(), selected=tenant_timezone
         )
     except Exception as e:
         current_app.logger.debug(
-            "Error retrieving timezone in /settings for [tenant_id] %s User [id] %s.",
+            "Error retrieving timezone in /settings for [tenant_id] %s User [id] %s. Error: %s",
             g.user.tenant_id,
             g.user.id,
+            e,
         )
         return render_template("landing/settings.html", timezones=get_timezones())
-
 
 @bp.route("/settings", methods=["POST"])
 @login_required
 def save_settings():
+
     timezone = request.form.get("timezone")
-    session["timezone"] = timezone
-    set_timezone_setting(g.user.tenant_id, timezone)
-    current_app.logger.info("Timezone has been set to %s.", session["timezone"])
-    flash(f'Timezone has been set to {session["timezone"]}')
 
-    return redirect(url_for("landing.show_settings"))
+    if timezone in get_timezones():
+        tenant_timezone = get_gmt(timezone)
+        set_timezone_setting(g.user.tenant_id, tenant_timezone)
+        session["timezone"] = tenant_timezone
 
+        current_app.logger.info("Timezone has been set to %s.", tenant_timezone)
+        flash(f"Timezone has been set to {tenant_timezone}")
+        return redirect(url_for("landing.save_settings"))
+    else:
+        error = f"Timezone {timezone} is not a displayed choice."
+
+        if error is not None:
+            flash(error)
+
+        return redirect(url_for("landing.show_settings.html"))
 
 @bp.route("/robots.txt")
 def robots_txt():
     return render_template("robots.txt")
+
 
 # TODO run this with scheduler
 # @bp.route("/<int:id>/overdue", methods=("POST",))

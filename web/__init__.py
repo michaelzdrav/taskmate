@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, make_response
+from flask import Flask, render_template, make_response, session
 from dotenv import load_dotenv
 from flask_mail import Mail
 from logging.config import dictConfig
@@ -15,6 +15,27 @@ db = SQLAlchemy()
 migrate = Migrate()
 mail = Mail()
 
+
+import pytz
+from pytz import timezone
+import tzlocal 
+
+def convert_utc_to_timezone(utc_time):
+    # Get the timezone object
+    user_timezone = pytz.timezone(session["timezone"])
+
+    # Convert the UTC time string to a datetime object
+    utc_datetime = datetime.strptime(utc_time, '%Y-%m-%d %H:%M:%S')
+
+    # Set the UTC timezone to the datetime object
+    utc_datetime = utc_datetime.replace(tzinfo=pytz.utc)
+
+    # Convert the UTC time to the provided timezone
+    converted_time = utc_datetime.astimezone(user_timezone)
+
+    formatted_time = converted_time.strftime("%d %B %Y %H:%M:%S")
+
+    return formatted_time
 
 def create_app(test_config=None):
     load_dotenv()
@@ -125,5 +146,8 @@ def create_app(test_config=None):
 
     paranoid = Paranoid(app)
     paranoid.redirect_view = "/"
+
+    app.jinja_env.filters['convert_utc_to_timezone'] = convert_utc_to_timezone
+
 
     return app

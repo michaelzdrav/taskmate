@@ -1,6 +1,5 @@
 from web import db
 
-
 class Tenant(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.Text, unique=True, nullable=False)
@@ -27,9 +26,9 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     tenant_id = db.Column(db.Integer, db.ForeignKey("tenant.id"), nullable=False)
     created = db.Column(
-        db.Date, nullable=False, server_default=db.func.current_timestamp()
+        db.DateTime, nullable=False, server_default=db.func.utc_timestamp()
     )
-    due_date = db.Column(db.Date, default=None)
+    due_date = db.Column(db.DateTime, default=None)
     title = db.Column(db.Text, nullable=False)
     status = db.Column(db.Text, nullable=False, default="ACTIVE")
     body = db.Column(db.Text, default=None)
@@ -47,7 +46,7 @@ class TaskComment(db.Model):
         db.Integer, db.ForeignKey("task.id", ondelete="CASCADE"), nullable=False
     )
     created = db.Column(
-        db.Date, nullable=False, server_default=db.func.current_timestamp()
+        db.DateTime, nullable=False, server_default=db.func.utc_timestamp()
     )
     content = db.Column(db.Text, nullable=False)
     task = db.relationship("Task")

@@ -8,7 +8,7 @@ http://taskmate.digital
 
 ## Features
 
-- Multienancy with a shared database schema
+- Multitenancy with a shared database schema
 - Basic Authentication
 - Secure session management protected by IP and login device
 - Written in Flask with gunicorn for performance
@@ -112,7 +112,8 @@ Order depends on what I feel like working on when I have the free time 😃
 - [x] Deploying this in AWS
 - [x] Add get_task before anything that uses the existing task to check it exists
 - [x] Switch to flask-sqlalchemy to support more db engines
-- [ ] Add settings page, configure timezones, store tasks in local timezones  ⌛
+- [x] Add timezone support
+- [ ] Test errors - redirect with flash instead of continuing with flash  ⌛
 - [ ] SMTP integration for notifications (task creation/overdue/comments left)
 - [ ] Add advanced pytests ⌛
 - [ ] Refactoring ⌛

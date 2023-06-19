@@ -1,5 +1,12 @@
 FROM python:3.8.16-slim-bullseye
 
+# Pass db environment variable
+ARG DATABASE_HOST
+ENV DATABASE_HOST=${DATABASE_HOST}
+
+ARG DATABASE_PORT
+ENV DATABASE_PORT=${DATABASE_PORT}
+
 # Set the working directory
 WORKDIR /run
 
@@ -14,18 +21,11 @@ COPY requirements.txt ./requirements.txt
 RUN venv/bin/pip3 install -r requirements.txt
 
 # Copy required code
-COPY web ./web
+EXPOSE 5001
 COPY migrations ./migrations
 COPY boot.sh gunicorn.conf.py ./
-
-# Pass db environment variable
-ARG DATABASE_HOST
-ENV DATABASE_HOST=${DATABASE_HOST}
-
-ARG DATABASE_PORT
-ENV DATABASE_PORT=${DATABASE_PORT}
+RUN chmod a+x boot.sh
+COPY web ./web
 
 # Run the application
-EXPOSE 5001
-RUN chmod a+x boot.sh
 ENTRYPOINT ["./boot.sh"]

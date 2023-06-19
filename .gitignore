@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Python linter
+.ruff*
+
 # C extensions
 *.so
 

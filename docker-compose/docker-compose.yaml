@@ -5,7 +5,8 @@ services:
     ports:
       - '80:5001'
     volumes:
-      - ../instance:/run/instance
+      - './web:/run/web'
+      - './migrations:/run/migrations'
     environment:
       - SECRET_KEY=<key>
       - MAIL_SERVER=changeme

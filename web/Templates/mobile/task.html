@@ -73,7 +73,7 @@
                 </tr>
                 <tr>
                     <th scope="row">Created On</th>
-                    <td>{{ view.created }}</td>
+                    <td>{{ view.created.strftime("%Y-%m-%d %H:%M:%S") | convert_utc_to_timezone }}</td>
                 </tr>
                 <tr>
                     <th scope="row">Created By</th>
@@ -116,7 +116,7 @@
             {% if comment.task_id == view.id %}
             <hr class="comment">
             <p>
-                Commented on: {{ comment.created}}
+                Commented on: {{ comment.created.strftime("%Y-%m-%d %H:%M:%S") | convert_utc_to_timezone }}
             </p>
             <p class="text-wrap">
                 {{ comment.content }}

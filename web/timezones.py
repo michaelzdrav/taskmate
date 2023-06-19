@@ -1,30 +1,35 @@
+from flask import current_app
+import pytz
+from datetime import datetime
+
 def get_timezones():
     return {
-        "Greenwich Mean Time (GMT+0)": "GMT+0",
-        "Central European Time (GMT+1)": "GMT+1",
-        "Eastern European Time (GMT+2)": "GMT+2",
-        "Eastern African Time (GMT+3)": "GMT+3",
-        "Moscow Standard Time (GMT+4)": "GMT+4",
-        "Pakistan Standard Time (GMT+5)": "GMT+5",
-        "Bangladesh Standard Time (GMT+6)": "GMT+6",
-        "Indochina Time (GMT+7)": "GMT+7",
-        "China Standard Time (GMT+8)": "GMT+8",
-        "Japan Standard Time (GMT+9)": "GMT+9",
-        "Australian Eastern Standard Time (GMT+10)": "GMT+10",
-        "Solomon Islands Time (GMT+11)": "GMT+11",
-        "New Zealand Standard Time (GMT+12)": "GMT+12",
-        "Azores Standard Time (GMT-1)": "GMT-1",
-        "Brasília Time (GMT-2)": "GMT-2",
-        "Atlantic Standard Time (GMT-3)": "GMT-3",
-        "Eastern Standard Time (GMT-4)": "GMT-4",
-        "Central Standard Time (GMT-5)": "GMT-5",
-        "Mountain Standard Time (GMT-6)": "GMT-6",
-        "Pacific Standard Time (GMT-7)": "GMT-7",
-        "Alaska Standard Time (GMT-8)": "GMT-8",
-        "Hawaii-Aleutian Standard Time (GMT-9)": "GMT-9",
-        "Samoa Standard Time (GMT-10)": "GMT-10",
-        "Marquesas Time (GMT-9:30)": "GMT-9:30",
-        "Niue Time (GMT-11)": "GMT-11",
-        "Baker Island Time (GMT-12)": "GMT-12",
-        "Australian Eastern Daylight Time (GMT+11)": "GMT+11",
+        "Africa/Lagos": "+01:00",
+        "Africa/Johannesburg": "+02:00",
+        "Africa/Nairobi": "+03:00",
+        "America/Buenos_Aires": "-03:00",
+        "America/Chicago": "-05:00",
+        "America/Los_Angeles": "-08:00",
+        "America/New_York": "-04:00",
+        "America/Santiago": "-04:00",
+        "America/Sao_Paulo": "-03:00",
+        "Asia/Dubai": "+04:00",
+        "Asia/Perth": "+08:00",
+        "Asia/Shanghai": "+08:00",
+        "Asia/Tokyo": "+09:00",
+        "Australia/Brisbane": "+10:00",
+        "Australia/Melbourne": "+10:00",
+        "Australia/Perth": "+08:00",
+        "Australia/Sydney": "+10:00",
+        "Europe/Berlin": "+02:00",
+        "Europe/London": "+01:00",
+        "Europe/Paris": "+02:00"
     }
+
+def get_gmt(timezone_name):
+    timezones = get_timezones()
+    for key, value in timezones.items():
+        current_app.logger.info("Key is %s, timezone name is %s", key, timezone_name)
+        if timezone_name in key:
+            return key
+    return None
