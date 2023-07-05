@@ -164,8 +164,6 @@ def login():
             user_agent_string,
         )
 
-<<<<<<< Updated upstream
-=======
         current_app.logger.info(
             "Log In attempt - %s, %s, %s, %s",
             request.headers.get('X-Forwarded-For'),
@@ -173,7 +171,7 @@ def login():
             request.headers.get('X-Client-IP'),
             get_user_ip(request)
         )
->>>>>>> Stashed changes
+        
         if error is None:
             tenancy = Tenant.query.filter_by(id=user.tenant_id).first()
             session.clear()
