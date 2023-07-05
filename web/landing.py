@@ -59,7 +59,7 @@ def error():
 @bp.route("/", methods=("GET",))
 def index(id=None):
     try:
-        if g.user and g.user.id:
+        if g.user is not None and g.user.id is not None:
             tasks = get_active_tasks(g.user.id)
             overdue = get_overdue_tasks(g.user.id)
             comments = get_comments(g.user.id)
@@ -250,9 +250,10 @@ def create():
 
 
 @bp.route("/done", methods=("GET",))
+@login_required
 def done(id=None):
     try:
-        if g.user.id:
+        if g.user.id is not None:
             tasks = (
                 Task.query.join(User)
                 .filter(
@@ -480,6 +481,7 @@ def delete(id):
 
 
 @bp.route("/settings", methods=["GET"])
+@login_required
 def show_settings():
     try:
         current_timezone = get_timezone_setting(g.user.tenant_id)

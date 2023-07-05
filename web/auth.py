@@ -26,6 +26,11 @@ bp = Blueprint("auth", __name__, url_prefix="/auth")
 def get_current_tenant_id():
     return session.get("tenant_id")
 
+def get_user_ip(req):
+    if 'HTTP_X_FORWARDED_FOR' in req.environ is None:
+        return req.environ.get["REMOTE_ADDR"]
+    else:
+        return req.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr) # if behind a proxy
 
 # Check expired tasks on user login
 def check_for_expired_tasks():
@@ -100,7 +105,7 @@ def register():
         current_app.logger.info(
             "Registration attempt - Username: %s, IP: %s. User-Agent: %s",
             username,
-            request.remote_addr,
+            get_user_ip(request),
             user_agent_string,
         )
 
@@ -159,6 +164,16 @@ def login():
             user_agent_string,
         )
 
+<<<<<<< Updated upstream
+=======
+        current_app.logger.info(
+            "Log In attempt - %s, %s, %s, %s",
+            request.headers.get('X-Forwarded-For'),
+            request.headers.get('X-Real-IP'),
+            request.headers.get('X-Client-IP'),
+            get_user_ip(request)
+        )
+>>>>>>> Stashed changes
         if error is None:
             tenancy = Tenant.query.filter_by(id=user.tenant_id).first()
             session.clear()
@@ -196,28 +211,30 @@ def load_logged_in_user():
 
 @bp.route("/logout")
 def logout():
-    user_agent_string = request.headers.get("User-Agent")
-    current_app.logger.info(
-        "Log Out attempt - Username: %s. IP: %s. User-Agent: %s",
-        session.get("username"),
-        request.remote_addr,
-        user_agent_string,
-    )
+    if session:
+        user_agent_string = request.headers.get("User-Agent")
+        current_app.logger.info(
+            "Log Out attempt - Username: %s. IP: %s. User-Agent: %s",
+            session.get("username"),
+            get_user_ip(request),
+            user_agent_string,
+        )
 
-    tenant = session.get("tenant_id")
-    user_id = session.get("user_id")
-    username = session.get("username")
+        tenant = session.get("tenant_id")
+        user_id = session.get("user_id")
+        username = session.get("username")
 
-    session.clear()
+        session.clear()
 
-    current_app.logger.info(
-        "Tenancy %s, User_id %s, User %s has logged out.",
-        tenant,
-        user_id,
-        username,
-    )
-    return redirect(url_for("index"))
-
+        current_app.logger.info(
+            "Tenancy %s, User_id %s, User %s has logged out.",
+            tenant,
+            user_id,
+            username,
+        )
+        return redirect(url_for("index"))
+    else:
+        return redirect(url_for("auth.login"))
 
 def login_required(view):
     @functools.wraps(view)

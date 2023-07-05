@@ -174,6 +174,7 @@ def get_task(id, check_user=True):
     if check_user and task.author_id != g.user.id:
         abort(403)
 
+    task.due_date = task.due_date.strftime("%Y-%m-%d") if task.due_date else None
     return task
 
 

@@ -1,6 +1,7 @@
 import os
 
-from flask import Flask, render_template, make_response, session
+from werkzeug.exceptions import HTTPException
+from flask import Flask, render_template, make_response, session, json, request
 from dotenv import load_dotenv
 from flask_mail import Mail
 from logging.config import dictConfig
@@ -149,5 +150,21 @@ def create_app(test_config=None):
 
     app.jinja_env.filters['convert_utc_to_timezone'] = convert_utc_to_timezone
 
+    @app.errorhandler(HTTPException)
+    def handle_exception(e):
+        """Return JSON instead of HTML for HTTP errors."""
+        # start with the correct headers and status code from the error
+        response = e.get_response()
+        exception_url = request.url
+        # replace the body with JSON
+        response.data = json.dumps({
+            "code": e.code,
+            "name": e.name,
+            "description": e.description,
+        })
+        response.content_type = "application/json"
+
+        app.logger.error("Error Code %s at %s. %s", e.code, exception_url, e.name)
+        return response
 
     return app
