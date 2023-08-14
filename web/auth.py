@@ -26,18 +26,21 @@ bp = Blueprint("auth", __name__, url_prefix="/auth")
 def get_current_tenant_id():
     return session.get("tenant_id")
 
+
 def get_user_ip(req):
-    if 'HTTP_X_FORWARDED_FOR' in req.environ is None:
+    if "HTTP_X_FORWARDED_FOR" in req.environ is None:
         return req.environ.get["REMOTE_ADDR"]
     else:
-        return req.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr) # if behind a proxy
+        return req.environ.get(
+            "HTTP_X_FORWARDED_FOR", request.remote_addr
+        )  # if behind a proxy
+
 
 # Check expired tasks on user login
 def check_for_expired_tasks():
     tz = session.get("timezone")
 
     if tz is not None:
-
         today = datetime.now(timezone("UTC")).date()
 
         tenants = db.session.query(Tenant).all()
@@ -47,7 +50,7 @@ def check_for_expired_tasks():
 
             for task in tasks:
                 if (
-                    task.status != "OVERDUE"
+                    (task.status != "OVERDUE" and task.status != "DONE")
                     and task.due_date
                     and task.due_date.date() <= today
                 ):
@@ -166,12 +169,12 @@ def login():
 
         current_app.logger.info(
             "Log In attempt - %s, %s, %s, %s",
-            request.headers.get('X-Forwarded-For'),
-            request.headers.get('X-Real-IP'),
-            request.headers.get('X-Client-IP'),
-            get_user_ip(request)
+            request.headers.get("X-Forwarded-For"),
+            request.headers.get("X-Real-IP"),
+            request.headers.get("X-Client-IP"),
+            get_user_ip(request),
         )
-        
+
         if error is None:
             tenancy = Tenant.query.filter_by(id=user.tenant_id).first()
             session.clear()
@@ -233,6 +236,7 @@ def logout():
         return redirect(url_for("index"))
     else:
         return redirect(url_for("auth.login"))
+
 
 def login_required(view):
     @functools.wraps(view)
