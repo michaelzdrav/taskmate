@@ -23,7 +23,7 @@ services:
   taskmate:
     image: taskmate
     ports:
-      - '80:5001'
+      - '5001:5001'
     volumes:
       - '../web:/run/web'
       - '../migrations:/run/migrations'

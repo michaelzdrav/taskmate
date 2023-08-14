@@ -4,7 +4,7 @@ Heres a basic to do list to keep you accountable of your tasks. Simply register 
 When your task is overdue, you will see an "Overdue" message displayed, along with an increment of the overdue task counter in the UI. Once completed, move the task to Done. Otherwise, Delete the task to be lost forever.
 
 ### Live Demo
-http://taskmate.digital
+https://taskmate.digital
 
 ## Features
 
@@ -114,6 +114,7 @@ Order depends on what I feel like working on when I have the free time 😃
 - [x] Switch to flask-sqlalchemy to support more db engines
 - [x] Add timezone support
 - [ ] Test errors - redirect with flash instead of continuing with flash  ⌛
+- [ ] Add support for multiple users in a tenancy
 - [ ] SMTP integration for notifications (task creation/overdue/comments left)
 - [ ] Add advanced pytests ⌛
 - [ ] Refactoring ⌛
@@ -127,11 +128,12 @@ Order depends on what I feel like working on when I have the free time 😃
 - [ ] Introduce background tasks with celery (for emails etc) to reduce waiting times   ⌛
   - https://flask.palletsprojects.com/en/2.3.x/patterns/celery/
 - [ ] Improve security
-  - [ ] Enable HTTPS
-  - [ ] Flask-talisman
+  - [x] Enable HTTPS
+  - [x] Flask-talisman
   - [x] Flask-paranoid
   - [ ] Password Reset
   - [ ] Password complexity
   - [ ] Account verification
 - [ ] Fix text wrapping on mobile/desktop view
 - [ ] Pytest for Flask-SQLAlchemy: https://github.com/jeancochrane/pytest-flask-sqlalchemy
+- Need to fix the images as they don't work from github anymore

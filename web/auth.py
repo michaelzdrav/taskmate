@@ -160,10 +160,11 @@ def login():
             error = "Incorrect username or password."
 
         user_agent_string = request.headers.get("User-Agent")
+        client_ip = request.headers.get('X-Forwarded-For')
         current_app.logger.info(
             "Log In attempt - Username: %s. IP: %s. User-Agent: %s",
             username,
-            request.remote_addr,
+            client_ip,
             user_agent_string,
         )
 
