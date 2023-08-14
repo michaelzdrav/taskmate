@@ -11,12 +11,12 @@
 </script>
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 offset-md-3">
-            <div class="text-center">
-                <h1>An error has occurred.</h1>
-            </div>
+<div class="d-flex align-items-center justify-content-center vh-100">
+    <div class="card text-white bg-primary">
+        <div class="card-body text-center">
+            <h1 class="card-title">Oops! An Error Occurred.</h1>
+            <p class="card-text">We're sorry for the inconvenience. Please try again later.</p>
+            <cite class="card-text">Your error code: {{ errorcode }}</cite>
         </div>
     </div>
 </div>

@@ -19,14 +19,14 @@ mail = Mail()
 
 import pytz
 from pytz import timezone
-import tzlocal 
+import tzlocal
 
 def convert_utc_to_timezone(utc_time):
     # Get the timezone object
     user_timezone = pytz.timezone(session["timezone"])
 
     # Convert the UTC time string to a datetime object
-    utc_datetime = datetime.strptime(utc_time, '%Y-%m-%d %H:%M:%S')
+    utc_datetime = datetime.strptime(utc_time, "%Y-%m-%d %H:%M:%S")
 
     # Set the UTC timezone to the datetime object
     utc_datetime = utc_datetime.replace(tzinfo=pytz.utc)
@@ -37,6 +37,7 @@ def convert_utc_to_timezone(utc_time):
     formatted_time = converted_time.strftime("%d %B %Y %H:%M:%S")
 
     return formatted_time
+
 
 def create_app(test_config=None):
     load_dotenv()
@@ -148,7 +149,7 @@ def create_app(test_config=None):
     paranoid = Paranoid(app)
     paranoid.redirect_view = "/"
 
-    app.jinja_env.filters['convert_utc_to_timezone'] = convert_utc_to_timezone
+    app.jinja_env.filters["convert_utc_to_timezone"] = convert_utc_to_timezone
 
     @app.errorhandler(HTTPException)
     def handle_exception(e):
@@ -157,14 +158,17 @@ def create_app(test_config=None):
         response = e.get_response()
         exception_url = request.url
         # replace the body with JSON
-        response.data = json.dumps({
-            "code": e.code,
-            "name": e.name,
-            "description": e.description,
-        })
+        response.data = json.dumps(
+            {
+                "code": e.code,
+                "name": e.name,
+                "description": e.description,
+            }
+        )
         response.content_type = "application/json"
 
         app.logger.error("Error Code %s at %s. %s", e.code, exception_url, e.name)
-        return response
+
+        return render_template("error.html", errorcode=e.code)
 
     return app
