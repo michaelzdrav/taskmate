@@ -7,6 +7,7 @@ from flask_mail import Mail
 from logging.config import dictConfig
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_seasurf import SeaSurf
 
 from datetime import datetime, timedelta
 from flask_talisman import Talisman
@@ -124,11 +125,10 @@ def create_app(test_config=None):
             pages = []
             ten_days_ago = (datetime.now() - timedelta(days=7)).date().isoformat()
             # static pages
-            # TODO change url to https after SSL is enabled
             for rule in app.url_map.iter_rules():
                 if "GET" in rule.methods and len(rule.arguments) == 0:
                     pages.append(
-                        ["http://taskmate.digital" + str(rule.rule), ten_days_ago]
+                        ["https://taskmate.digital" + str(rule.rule), ten_days_ago]
                     )
 
             sitemap_xml = render_template("sitemap_template.xml", pages=pages)
@@ -143,8 +143,8 @@ def create_app(test_config=None):
     app.register_blueprint(landing.bp)
     app.add_url_rule("/", endpoint="index")
 
-    # TODO enable Talisman once SSL is enabled
-    # Talisman(app, content_security_policy=None)
+    Talisman(app, content_security_policy=None)
+    csrf = SeaSurf(app)
 
     paranoid = Paranoid(app)
     paranoid.redirect_view = "/"

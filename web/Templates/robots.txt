@@ -5,4 +5,4 @@ Disallow: /done/
 Disallow: /settings/
 
 
-Sitemap: http://taskmate.digital/sitemap.xml
+Sitemap: https://taskmate.digital/sitemap.xml
