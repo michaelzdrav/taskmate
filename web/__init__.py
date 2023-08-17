@@ -7,11 +7,10 @@ from flask_mail import Mail
 from logging.config import dictConfig
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_seasurf import SeaSurf
 
 from datetime import datetime, timedelta
-from flask_talisman import Talisman
-from flask_paranoid import Paranoid
+# from flask_talisman import Talisman
+# from flask_paranoid import Paranoid
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -143,21 +142,30 @@ def create_app(test_config=None):
     app.register_blueprint(landing.bp)
     app.add_url_rule("/", endpoint="index")
 
-    Talisman(app, content_security_policy=None)
-    csrf = SeaSurf(app)
+    # Talisman(app, content_security_policy=None)
+    # csrf = SeaSurf(app)
 
-    paranoid = Paranoid(app)
-    paranoid.redirect_view = "/"
+    # paranoid = Paranoid(app)
+    # paranoid.redirect_view = "/"
 
     app.jinja_env.filters["convert_utc_to_timezone"] = convert_utc_to_timezone
 
     @app.errorhandler(HTTPException)
     def handle_exception(e):
         """Return JSON instead of HTML for HTTP errors."""
-        # start with the correct headers and status code from the error
         response = e.get_response()
         exception_url = request.url
-        # replace the body with JSON
+
+        # if e.code == 404:
+        #     error_info = {
+        #         "code": e.code,
+        #         "name": e.name,
+        #         "description": e.description,
+        #         "url": exception_url
+        #     }
+        #     with open("error_404.json", "w") as error_file:
+        #         json.dump(error_info, error_file)
+
         response.data = json.dumps(
             {
                 "code": e.code,
