@@ -1,16 +1,16 @@
 import os
 
-from flask import Flask, render_template, make_response, session
+from werkzeug.exceptions import HTTPException
+from flask import Flask, render_template, make_response, session, json, request
 from dotenv import load_dotenv
 from flask_mail import Mail
 from logging.config import dictConfig
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_seasurf import SeaSurf
 
 from datetime import datetime, timedelta
-from flask_talisman import Talisman
-from flask_paranoid import Paranoid
+# from flask_talisman import Talisman
+# from flask_paranoid import Paranoid
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -19,14 +19,14 @@ mail = Mail()
 
 import pytz
 from pytz import timezone
-import tzlocal 
+import tzlocal
 
 def convert_utc_to_timezone(utc_time):
     # Get the timezone object
     user_timezone = pytz.timezone(session["timezone"])
 
     # Convert the UTC time string to a datetime object
-    utc_datetime = datetime.strptime(utc_time, '%Y-%m-%d %H:%M:%S')
+    utc_datetime = datetime.strptime(utc_time, "%Y-%m-%d %H:%M:%S")
 
     # Set the UTC timezone to the datetime object
     utc_datetime = utc_datetime.replace(tzinfo=pytz.utc)
@@ -37,6 +37,7 @@ def convert_utc_to_timezone(utc_time):
     formatted_time = converted_time.strftime("%d %B %Y %H:%M:%S")
 
     return formatted_time
+
 
 def create_app(test_config=None):
     load_dotenv()
@@ -141,13 +142,41 @@ def create_app(test_config=None):
     app.register_blueprint(landing.bp)
     app.add_url_rule("/", endpoint="index")
 
-    Talisman(app, content_security_policy=None)
-    csrf = SeaSurf(app)
+    # Talisman(app, content_security_policy=None)
+    # csrf = SeaSurf(app)
 
-    paranoid = Paranoid(app)
-    paranoid.redirect_view = "/"
+    # paranoid = Paranoid(app)
+    # paranoid.redirect_view = "/"
 
-    app.jinja_env.filters['convert_utc_to_timezone'] = convert_utc_to_timezone
+    app.jinja_env.filters["convert_utc_to_timezone"] = convert_utc_to_timezone
 
+    @app.errorhandler(HTTPException)
+    def handle_exception(e):
+        """Return JSON instead of HTML for HTTP errors."""
+        response = e.get_response()
+        exception_url = request.url
+
+        # if e.code == 404:
+        #     error_info = {
+        #         "code": e.code,
+        #         "name": e.name,
+        #         "description": e.description,
+        #         "url": exception_url
+        #     }
+        #     with open("error_404.json", "w") as error_file:
+        #         json.dump(error_info, error_file)
+
+        response.data = json.dumps(
+            {
+                "code": e.code,
+                "name": e.name,
+                "description": e.description,
+            }
+        )
+        response.content_type = "application/json"
+
+        app.logger.error("Error Code %s at %s. %s", e.code, exception_url, e.name)
+
+        return render_template("error.html", errorcode=e.code)
 
     return app

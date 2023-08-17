@@ -59,7 +59,7 @@ def error():
 @bp.route("/", methods=("GET",))
 def index(id=None):
     try:
-        if g.user and g.user.id:
+        if g.user is not None and g.user.id is not None:
             tasks = get_active_tasks(g.user.id)
             overdue = get_overdue_tasks(g.user.id)
             comments = get_comments(g.user.id)
@@ -250,9 +250,10 @@ def create():
 
 
 @bp.route("/done", methods=("GET",))
+@login_required
 def done(id=None):
     try:
-        if g.user.id:
+        if g.user.id is not None:
             tasks = (
                 Task.query.join(User)
                 .filter(
@@ -327,29 +328,31 @@ def done(id=None):
 @bp.route("/<int:id>/comment", methods=("POST",))
 @login_required
 def add_comment(id):
-    comment = request.form["comment"]
-    current_app.logger.info("Task [id] %s, adding [comment] %s", id, comment)
-    task = get_task(id)
-    error = None
-    tenant_id = g.get("tenant_id")
+    if request.method == "POST":
+        comment = request.form["comment"]
+        current_app.logger.info("Task [id] %s, adding [comment] %s", id, comment)
+        task = get_task(id)
+        error = None
+        tenant_id = g.get("tenant_id")
 
-    if not comment:
-        error = "Comment is required."
-    if error is not None:
-        flash(error)
+        if not comment:
+            error = "Comment is required."
+        if error is not None:
+            flash(error)
+        else:
+            utc_time = datetime.now(pytz.timezone('UTC'))
+
+            task_comment = TaskComment(task_id=id, content=comment, tenant_id=tenant_id, created=utc_time)
+            db.session.add(task_comment)
+            db.session.commit()
+
+        if task.status != "DONE":
+            return load_view(id)
+            # return redirect(url_for("landing.index"))
+        else:
+            return load_doneview(id)
     else:
-        utc_time = datetime.now(pytz.timezone('UTC'))
-
-        task_comment = TaskComment(task_id=id, content=comment, tenant_id=tenant_id, created=utc_time)
-        db.session.add(task_comment)
-        db.session.commit()
-
-    if task.status != "DONE":
-        return load_view(id)
-        # return redirect(url_for("landing.index"))
-    else:
-        return load_doneview(id)
-
+        return redirect(url_for("landing.index"))
 
 @bp.route("/<int:id>/deletecomment/<int:task>", methods=("POST",))
 @login_required
@@ -480,6 +483,7 @@ def delete(id):
 
 
 @bp.route("/settings", methods=["GET"])
+@login_required
 def show_settings():
     try:
         current_timezone = get_timezone_setting(g.user.tenant_id)
@@ -498,7 +502,7 @@ def show_settings():
             g.user.id,
             e,
         )
-        return render_template("landing/settings.html", timezones=get_timezones())
+        return render_template("landing/index.html")
 
 @bp.route("/settings", methods=["POST"])
 @login_required
