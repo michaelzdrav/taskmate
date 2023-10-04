@@ -1,4 +1,4 @@
-FROM python:3.8.16-slim-bullseye
+FROM python:3.12.0-slim-bullseye
 
 # Pass db environment variable
 ARG DATABASE_HOST
